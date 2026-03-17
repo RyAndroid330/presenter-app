@@ -103,10 +103,10 @@ onMounted(loadLessons)
 
 <style scoped>
 .teacher {
-  height: 100vh;
-  background: #2f2f2f;
-  color: white;
-  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  background: #181818;
+  color: #e0e0e0;
+  font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -118,7 +118,75 @@ onMounted(loadLessons)
   display: flex;
   align-items: center;
   gap: 20px;
-  margin-bottom: 30px;
+}
+.back-btn {
+  background: none;
+  color: var(--accent-color);
+  border: none;
+  font-size: 1.1em;
+  cursor: pointer;
+  border-radius: 16px;
+  padding: 0.5em 1.2em;
+  transition: background 0.2s, color 0.2s;
+}
+.back-btn:hover {
+  background: var(--accent-color);
+  color: #181818;
+}
+.new-btn {
+  background: var(--accent-color);
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  padding: 0.5em 1.5em;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 1em 0;
+  transition: background 0.2s;
+}
+.new-btn:hover {
+  background: var(--accent-color-hover);
+}
+.lesson-list {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+.lesson-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #232323;
+  border-radius: 12px;
+  padding: 0.7em 1em;
+  margin-bottom: 0.7em;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.rename-input {
+  background: #222;
+  color: #e0e0e0;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 0.4em 0.8em;
+}
+.delete-btn {
+  background: none;
+  color: #e74c3c;
+  border: none;
+  font-size: 1.1em;
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 0.2em 0.7em;
+  transition: background 0.2s, color 0.2s;
+}
+.delete-btn:hover {
+  background: #e74c3c;
+  color: #fff;
+}
+.empty {
+  color: #b3b3b3;
+  text-align: center;
+  margin-top: 2em;
 }
 
 .header h1 {

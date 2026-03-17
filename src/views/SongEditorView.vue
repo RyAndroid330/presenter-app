@@ -383,6 +383,68 @@ onMounted(() => {
 
 <style scoped>
 .editor-layout {
+  min-height: 100vh;
+  background: #181818;
+  color: #e0e0e0;
+  font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
+}
+.main-area, .sidebar {
+  background: #232323;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  margin: 1em;
+  padding: 1.5em;
+}
+.save-btn, .pk-cell, .pk-bass-btn, .type-btn, .share-btn {
+  background: var(--accent-color);
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  padding: 0.4em 1.2em;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 0.2em;
+  transition: background 0.2s;
+}
+.save-btn:hover, .pk-cell:hover, .pk-bass-btn:hover, .type-btn:hover, .share-btn:hover {
+  background: var(--accent-color-hover);
+}
+.modal, .modal-overlay {
+  background: #232323;
+  color: #e0e0e0;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.field-label {
+  color: var(--accent-color);
+}
+.list-item.active, .section-header {
+  background: #282828;
+  color: var(--accent-color);
+}
+.list-item {
+  background: #232323;
+  color: #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 0.5em;
+  padding: 0.5em 1em;
+}
+.delete-btn {
+  background: none;
+  color: #e74c3c;
+  border: none;
+  font-size: 1.1em;
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 0.2em 0.7em;
+  transition: background 0.2s, color 0.2s;
+}
+.delete-btn:hover {
+  background: #e74c3c;
+  color: #fff;
+}
+
+.editor-layout {
   display: flex;
   height: 100dvh;
   width: 100dvw;

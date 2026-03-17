@@ -195,6 +195,60 @@ onUnmounted(() => {
 
 <style scoped>
 .viewer {
+  min-height: 100vh;
+  background: #181818;
+  color: #e0e0e0;
+  font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
+}
+.waiting-message {
+  color: #b3b3b3;
+  font-size: 1.3em;
+  margin-top: 2em;
+}
+.display {
+  font-size: 2.5em;
+  background: #232323;
+  border-radius: 16px;
+  padding: 2em;
+  margin: 2em auto;
+  max-width: 900px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.chord-toggle {
+  position: fixed;
+  bottom: 2em;
+  right: 2em;
+  background: var(--accent-color);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  font-size: 2em;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.chord-toggle.active, .chord-toggle:hover {
+  background: var(--accent-color-hover);
+}
+.chord-sheet {
+  background: #232323;
+  border-radius: 16px;
+  padding: 1.5em;
+  margin: 2em auto;
+  max-width: 900px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.cs-chords {
+  color: var(--accent-color);
+  font-weight: bold;
+}
+.cs-text {
+  color: #e0e0e0;
+}
+
+.viewer {
   height: 100vh;
   margin: 0;
   background: #2f2f2f;
@@ -291,7 +345,6 @@ onUnmounted(() => {
     font-size: 24px;
   }
 }
-</style>
 
 .waiting-message {
   font-size: 2.2rem;
@@ -304,3 +357,5 @@ onUnmounted(() => {
   transform: translate(-50%, -50%);
   pointer-events: none;
 }
+
+</style>

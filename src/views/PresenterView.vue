@@ -820,6 +820,65 @@ onUnmounted(() => {
 </script>
 <style>
 .presenter-layout {
+  min-height: 100vh;
+  background: #181818;
+  color: #e0e0e0;
+  font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
+}
+.presenter-area, .right-sidebar {
+  background: #232323;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  margin: 1em;
+  padding: 1.5em;
+}
+.sidebar-icons button, .back-btn {
+  background: none;
+  color: var(--accent-color);
+  border: none;
+  font-size: 1.1em;
+  cursor: pointer;
+  border-radius: 16px;
+  padding: 0.5em 1.2em;
+  transition: background 0.2s, color 0.2s;
+}
+.sidebar-icons button.active, .sidebar-icons button:hover, .back-btn:hover {
+  background: var(--accent-color);
+  color: #181818;
+}
+.meeting-input, .panel-select, .quick-add-text, .quick-add-select, .search-input, .lang-select, .bible-lang-select {
+  background: #222;
+  color: #e0e0e0;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 0.4em 0.8em;
+}
+.meeting-list, .slide-list, .session-songs, .item-list {
+  background: #232323;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 1em;
+}
+.meeting-item.active, .slide-item.active, .session-song.active, .ss-section.active {
+  background: #282828;
+  color: var(--accent-color);
+}
+.meeting-delete-btn, .edit-btn, .delete-btn, .slide-delete-btn, .slide-move-btn, .add-btn {
+  background: none;
+  color: #e74c3c;
+  border: none;
+  font-size: 1.1em;
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 0.2em 0.7em;
+  transition: background 0.2s, color 0.2s;
+}
+.meeting-delete-btn:hover, .edit-btn:hover, .delete-btn:hover, .slide-delete-btn:hover, .slide-move-btn:hover, .add-btn:hover {
+  background: #e74c3c;
+  color: #fff;
+}
+
+.presenter-layout {
   display: flex;
   height: 100dvh;
   width: 100dvw;

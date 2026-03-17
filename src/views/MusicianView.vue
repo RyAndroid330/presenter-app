@@ -650,6 +650,49 @@ onMounted(async () => {
 
 <style scoped>
 .musician-layout {
+  min-height: 100vh;
+  background: #181818;
+  color: #e0e0e0;
+  font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
+}
+.main-area, .sidebar {
+  background: #232323;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  margin: 1em;
+  padding: 1.5em;
+}
+.se-title, .section-header {
+  color: var(--accent-color);
+  font-weight: bold;
+}
+.se-song, .list-item {
+  background: #232323;
+  color: #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 0.5em;
+  padding: 0.5em 1em;
+}
+.se-song .se-actions button, .add-btn, .share-btn, .se-move, .se-remove, .delete-btn {
+  background: var(--accent-color);
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  padding: 0.3em 1em;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 0.2em;
+  transition: background 0.2s;
+}
+.se-song .se-actions button:hover, .add-btn:hover, .share-btn:hover, .se-move:hover, .se-remove:hover, .delete-btn:hover {
+  background: var(--accent-color-hover);
+}
+.empty-hint {
+  color: #b3b3b3;
+  text-align: center;
+  margin-top: 2em;
+}
+.musician-layout {
   display: flex;
   height: 100dvh;
   width: 100dvw;
@@ -1103,7 +1146,7 @@ onMounted(async () => {
     min-height: 200px;
   }
 }
-</style>
+
 
 /* Sharing modal styles */
 .modal-overlay {
@@ -1163,3 +1206,5 @@ onMounted(async () => {
   gap: 8px;
   margin-bottom: 2px;
 }
+
+</style>
