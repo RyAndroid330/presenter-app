@@ -787,17 +787,16 @@ async function toggleExpandSong(songId) {
       if (res.ok && (res.headers.get('content-type') || '').includes('application/json')) {
         song = await res.json()
       }
-    } catch (e) { /* ignore, try XML fallback */ }
-
-    // If not found, try XML song fallback
+    } catch {}
+    // If not found, try XML song fallback (same as quick song tool)
     if (!song) {
-      // Try to find the XML song object from allSongs or sessionSongs
+      // Try to find the XML song object from xmlSongs (like quick song tool)
       let xml = null;
-      if (Array.isArray(allSongs?.value)) {
-        xml = allSongs.value.find(x => x.id === songId || x.filename === songId)
+      if (Array.isArray(xmlSongs?.value)) {
+        xml = xmlSongs.value.find(x => x.id == songId || x.filename == songId)
       }
-      if (!xml && Array.isArray(sessionSongs?.value)) {
-        xml = sessionSongs.value.find(x => x.id === songId || x.filename === songId)
+      if (!xml && Array.isArray(allSongs?.value)) {
+        xml = allSongs.value.find(x => x.id == songId || x.filename == songId)
       }
       if (xml && xml.language && xml.filename) {
         try {
@@ -805,21 +804,20 @@ async function toggleExpandSong(songId) {
           if (res.ok && (res.headers.get('content-type') || '').includes('application/json')) {
             song = await res.json()
           }
-        } catch (e) { /* ignore */ }
+        } catch {}
       }
     }
-
-    if (!song || !Array.isArray(song.sections)) {
+    if (song && song.sections) {
+      expandedSongId.value = songId
+      expandedSections.value = (song.sections || []).map(s => ({
+        ...s,
+        chords: s.chords ? (typeof s.chords === 'string' ? JSON.parse(s.chords) : s.chords) : {}
+      }))
+    } else {
       console.warn('[toggleExpandSong] No sections found for song:', songId, song)
       expandedSongId.value = songId
       expandedSections.value = []
-      return
     }
-    expandedSongId.value = songId
-    expandedSections.value = song.sections.map(s => ({
-      ...s,
-      chords: s.chords ? (typeof s.chords === 'string' ? JSON.parse(s.chords) : s.chords) : {}
-    }))
   } catch (e) {
     console.error('[toggleExpandSong] Error:', e)
     alert('Could not load song data. (Network or parsing error)')
