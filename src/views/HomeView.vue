@@ -1,4 +1,5 @@
 <template>
+  <!-- Mac Dark Mode meets Spotify styling -->
   <div class="home-layout">
     <aside class="sidebar" :class="{ expanded: sidebarHover }" @mouseenter="sidebarHover = true" @mouseleave="sidebarHover = false">
       <div class="sidebar-buttons">
@@ -21,8 +22,8 @@
       </div>
     </aside>
     <main class="main-content">
-      <h1>Welcome to Presentation Control</h1>
-      <p class="welcome-msg">Easily manage and join meetings for presentations, music, and lessons.</p>
+      <h1>Welcome to StudyLink</h1>
+      <p class="welcome-msg">Your meeting, on every screen.</p>
       <div class="meetings-card">
         <h2>Active Meetings</h2>
         <ul class="meetings-list">
@@ -142,6 +143,118 @@ onUnmounted(() => {
   clearInterval(pollInterval)
 })
 </script>
+
+<style scoped>
+.home-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #181818;
+}
+.sidebar {
+  width: 64px;
+  background: #232323;
+  color: #fff;
+  transition: width 0.2s;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+  padding-top: 2em;
+}
+.sidebar.expanded {
+  width: 200px;
+}
+.sidebar-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+.sidebar button {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 1.1em;
+  padding: 0.7em 1em;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.sidebar button:hover {
+  background: var(--accent-color);
+  color: var(--accent-color-hover);
+}
+.icon {
+  margin-right: 0.7em;
+  font-size: 1.5em;
+}
+.label {
+  font-weight: 500;
+}
+.main-content {
+  flex: 1;
+  padding: 2em 3em;
+}
+h1 {
+  font-size: 2.2em;
+  font-weight: 700;
+  margin-bottom: 0.5em;
+}
+.welcome-msg {
+  font-size: 1.2em;
+  color: #b3b3b3;
+  margin-bottom: 2em;
+}
+.meetings-card {
+  background: #232323;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  padding: 1.5em;
+  margin-top: 1em;
+}
+.meetings-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.meeting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7em 0;
+  border-bottom: 1px solid #333;
+}
+.meeting-name {
+  font-weight: 500;
+}
+.join-btn {
+  background: var(--accent-color);
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  padding: 0.4em 1.2em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.join-btn:hover {
+  background: var(--accent-color-hover);
+}
+.no-meetings {
+  color: #b3b3b3;
+  text-align: center;
+  padding: 1em 0;
+}
+dialog {
+  background: #232323;
+  color: #fff;
+  border-radius: 16px;
+  padding: 2em;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+select, button {
+  font-size: 1em;
+}
+</style>
 
 // ...existing code...
 <style scoped>

@@ -1,0 +1,63 @@
+/* Mac Dark Mode meets Spotify theme */
+body {
+  --accent-color: #1db954;
+  --accent-color-hover: #1ed760;
+  background: #181818;
+  color: #e0e0e0;
+  font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
+  margin: 0;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  background: #222;
+}
+::-webkit-scrollbar-thumb {
+  background: #282828;
+  border-radius: 4px;
+}
+
+.app-header, .navbar {
+  background: #282828;
+  color: #fff;
+  border-bottom: 1px solid #222;
+}
+
+.button, .btn {
+  background: var(--accent-color);
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  padding: 0.5em 1.5em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.button:hover, .btn:hover {
+  background: var(--accent-color-hover);
+}
+
+.card {
+  background: #232323;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  padding: 1.5em;
+  margin: 1em 0;
+}
+
+input, textarea, select {
+  background: #222;
+  color: #e0e0e0;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 0.5em;
+}
+
+/* Accent color for links */
+a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--accent-color-hover);
+}
