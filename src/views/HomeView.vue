@@ -157,7 +157,6 @@ onUnmounted(() => {
   transition: width 0.2s;
   box-shadow: 2px 0 8px rgba(0,0,0,0.15);
   padding-top: 2em;
-  min-width: 56px;
 }
 .sidebar.expanded {
   width: 200px;
@@ -193,7 +192,6 @@ onUnmounted(() => {
 .main-content {
   flex: 1;
   padding: 2em 3em;
-  min-width: 0;
 }
 h1 {
   font-size: 2.2em;
@@ -211,8 +209,6 @@ h1 {
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
   padding: 1.5em;
   margin-top: 1em;
-  max-width: 100vw;
-  box-sizing: border-box;
 }
 .meetings-list {
   list-style: none;
@@ -254,83 +250,9 @@ dialog {
   padding: 2em;
   border: none;
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  max-width: 95vw;
-  box-sizing: border-box;
 }
 select, button {
   font-size: 1em;
-}
-
-@media (max-width: 900px) {
-  .main-content {
-    padding: 1.2em 0.7em;
-  }
-  .sidebar {
-    width: 48px;
-  }
-  .sidebar.expanded {
-    width: 120px;
-  }
-}
-
-@media (max-width: 600px) {
-  .home-layout {
-    flex-direction: column;
-    min-height: 100vh;
-  }
-  .sidebar {
-    width: 100vw;
-    min-width: 0;
-    height: auto;
-    flex-direction: row;
-    box-shadow: none;
-    padding-top: 0.5em;
-    padding-bottom: 0.5em;
-    position: static;
-    z-index: 1;
-  }
-  .sidebar.expanded {
-    width: 100vw;
-  }
-  .sidebar-buttons {
-    flex-direction: row;
-    gap: 0.5em;
-    padding: 0.5em 0.2em;
-    align-items: center;
-    justify-content: center;
-  }
-  .sidebar button {
-    font-size: 1em;
-    padding: 0.5em 0.7em;
-    border-radius: 10px;
-  }
-  .main-content {
-    padding: 1em 0.3em;
-  }
-  .meetings-card {
-    padding: 0.7em;
-    border-radius: 10px;
-  }
-  h1 {
-    font-size: 1.3em;
-  }
-}
-
-@media (max-width: 400px) {
-  .sidebar {
-    width: 100vw;
-    min-width: 0;
-  }
-  .sidebar.expanded {
-    width: 100vw;
-  }
-  .main-content {
-    padding: 0.5em 0.1em;
-  }
-  .meetings-card {
-    padding: 0.4em;
-    border-radius: 7px;
-  }
 }
 </style>
 
