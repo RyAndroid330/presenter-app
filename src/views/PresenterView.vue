@@ -754,7 +754,21 @@ async function onSessionChange() {
   try {
     const res = await fetch('/api/setlists/' + selectedSessionId.value)
     const s = await res.json()
-    sessionSongs.value = s.songs || []
+    // Enrich sessionSongs with XML metadata if available
+    sessionSongs.value = (s.songs || []).map(song => {
+      // Try to find a matching XML song by id or filename
+      let xml = null;
+      if (Array.isArray(allSongs?.value)) {
+        xml = allSongs.value.find(x => x.id === song.song_id || x.filename === song.song_id)
+      }
+      if (!xml && Array.isArray(xmlSongs?.value)) {
+        xml = xmlSongs.value.find(x => x.id === song.song_id || x.filename === song.song_id)
+      }
+      if (xml && xml.language && xml.filename) {
+        return { ...song, language: xml.language, filename: xml.filename };
+      }
+      return song;
+    })
   } catch (e) { console.error(e) }
 }
 
