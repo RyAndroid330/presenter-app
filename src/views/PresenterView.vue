@@ -767,6 +767,22 @@ async function toggleExpandSong(songId) {
   try {
     console.log('[toggleExpandSong] songId:', songId)
     const res = await fetch('/api/songs/' + songId)
+    if (!res.ok) {
+      console.error(`[toggleExpandSong] API error: ${res.status} ${res.statusText}`)
+      alert('Could not load song data. (API error)')
+      expandedSongId.value = songId
+      expandedSections.value = []
+      return
+    }
+    const contentType = res.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) {
+      const text = await res.text();
+      console.error('[toggleExpandSong] Non-JSON response:', text);
+      alert('Could not load song data. (Non-JSON response)')
+      expandedSongId.value = songId
+      expandedSections.value = []
+      return
+    }
     const song = await res.json()
     console.log('[toggleExpandSong] API song:', song)
     if (!song || !Array.isArray(song.sections)) {
@@ -782,6 +798,7 @@ async function toggleExpandSong(songId) {
     }))
   } catch (e) {
     console.error('[toggleExpandSong] Error:', e)
+    alert('Could not load song data. (Network or parsing error)')
     expandedSongId.value = songId
     expandedSections.value = []
   }
