@@ -1,71 +1,130 @@
-<template>
-  <div class="viewer">
-    <div v-if="!displayText" class="waiting-message">
-      Waiting for the meeting to start
-    </div>
-    <div ref="displayRef" class="display" v-show="(!showChords || !currentChords) && displayText">
-      {{ displayText }}
-    </div>
-
-    <div v-if="showChords && currentChords" class="chord-sheet">
-      <template v-for="(line, idx) in chordSheetLines" :key="idx">
-        <div v-if="line.hasChords" class="cs-chords">{{ line.chordLine }}</div>
-        <div class="cs-text">{{ line.textLine || '\u00A0' }}</div>
-      </template>
-    </div>
-
-    <button class="chord-toggle" :class="{ active: showChords }" @click="toggleChords">&#9834;</button>
-  </div>
-</template>
-
-<script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { createFitText } from '../composables/useFitText.js'
-
-const route = useRoute()
-const router = useRouter()
-const meeting = route.query.meet
-
-if (!meeting) {
-  alert('No meeting selected')
-  router.push('/')
+<style scoped>
+.viewer {
+  min-height: 100vh;
+  background: #181818;
+  color: #e0e0e0;
+  font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  box-sizing: border-box;
+  padding: 0 1.5vw;
+}
+.waiting-message {
+  color: #b3b3b3;
+  font-size: 1.3em;
+  margin-top: 2em;
+  text-align: center;
+}
+.display {
+  font-size: 2.5em;
+  background: #232323;
+  border-radius: 16px;
+  padding: 2em 1em;
+  margin: 2em auto;
+  max-width: 900px;
+  width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  text-align: center;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+.chord-toggle {
+  position: fixed;
+  bottom: 2em;
+  right: 2em;
+  background: var(--accent-color);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  font-size: 2em;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: background 0.2s;
+  z-index: 10;
+}
+.chord-toggle.active, .chord-toggle:hover {
+  background: var(--accent-color-hover);
+}
+.chord-sheet {
+  background: #232323;
+  border-radius: 16px;
+  padding: 1.5em 1em;
+  margin: 2em auto;
+  max-width: 900px;
+  width: 100%;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: clamp(14px, 2.5vw, 40px);
+  white-space: pre;
+  max-height: 90vh;
+  overflow-y: auto;
+  line-height: 1.3;
+  box-sizing: border-box;
+}
+.cs-chords {
+  color: #4fc3f7;
+  font-weight: bold;
+}
+.cs-text {
+  margin-bottom: 0.6em;
 }
 
-
-const displayRef = ref(null)
-const displayText = ref('')
-const currentChords = ref(null)
-const showChords = ref(false)
-
-
-let fitText = null
-let eventSource = null
-let resizeHandler = null
-let wakeLock = null
-let noSleepVideo = null
-
-// --- Keep screen awake: Wake Lock API + silent-video fallback ---
-
-async function requestWakeLock() {
-  // 1) Try the modern Wake Lock API
-  if ('wakeLock' in navigator) {
-    try {
-      wakeLock = await navigator.wakeLock.request('screen')
-      wakeLock.addEventListener('release', () => { wakeLock = null })
-      return // success – no need for video fallback
-    } catch { /* denied or failed, fall through */ }
+@media (max-width: 900px) {
+  .display, .chord-sheet {
+    font-size: 2em;
+    padding: 1.2em 0.5em;
+    margin: 1.2em auto;
+    border-radius: 12px;
   }
-  // 2) Fallback: loop a tiny silent video to keep device awake
-  enableNoSleepVideo()
+  .chord-toggle {
+    width: 48px;
+    height: 48px;
+    font-size: 1.5em;
+    bottom: 1em;
+    right: 1em;
+  }
 }
 
-function enableNoSleepVideo() {
-  if (noSleepVideo) return
-  // Minimal 1-second silent MP4 (base64). Works on iOS Safari + Android Chrome.
-  const silentMp4 = 'data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAAIZnJlZQAAA' +
-    'JxtZGF0AAACrwYF//+r3EXpvebZSLeWLNgg2SPu73gyNjQgLSBjb3JlIDE2NCByMzEwOCA' +
-    'zMWUxOWY5IC0gSC4yNjQvTVBFRy00IEFWQyBjb2RlYyAtIENvcHlsZWZ0IDIwMDMtMjAy' +
+@media (max-width: 600px) {
+  .viewer {
+    padding: 0 0.5vw;
+  }
+  .display, .chord-sheet {
+    font-size: 1.2em;
+    padding: 0.7em 0.2em;
+    margin: 0.7em auto;
+    border-radius: 8px;
+    max-width: 98vw;
+  }
+  .chord-toggle {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1em;
+    bottom: 0.7em;
+    right: 0.7em;
+  }
+}
+
+@media (max-width: 400px) {
+  .display, .chord-sheet {
+    font-size: 1em;
+    padding: 0.3em 0.1em;
+    border-radius: 5px;
+  }
+  .chord-toggle {
+    width: 32px;
+    height: 32px;
+    font-size: 0.9em;
+    bottom: 0.3em;
+    right: 0.3em;
+  }
+}
+</style>
     'MyAtIGh0dHA6Ly93d3cudmlkZW9sYW4ub3JnL3gyNjQuaHRtbCAtIG9wdGlvbnM6IGNhY' +
     'mFjPTAgcmVmPTEgZGVibG9jaz0xOjA6MCBhbmFseXNlPTB4MToweDEgbWU9ZGlhIHN1Ym' +
     '1lPTAgcHN5PTEgcHN5X3JkPTEuMDA6MC4wMCBtaXhlZF9yZWY9MCBtZV9yYW5nZT0xNiBj' +

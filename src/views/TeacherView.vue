@@ -272,29 +272,71 @@ onMounted(loadLessons)
   padding: 20px;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 900px) {
   .teacher {
-    padding: 15px 10px;
-    overflow-y: auto;
-  }
-  .header {
-    gap: 12px;
-    margin-bottom: 20px;
+    padding: 18px 8px;
   }
   .header h1 {
     font-size: 22px;
   }
+  .lesson-list, .new-btn {
+    width: 98vw;
+    max-width: 98vw;
+  }
+}
+
+@media (max-width: 600px) {
+  .teacher {
+    padding: 10px 2vw;
+    overflow-y: auto;
+  }
+  .header {
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .header h1 {
+    font-size: 18px;
+  }
   .back-btn {
-    padding: 8px 14px;
-    font-size: 16px;
+    padding: 7px 10px;
+    font-size: 14px;
   }
   .new-btn {
-    font-size: 16px;
-    padding: 12px;
+    font-size: 14px;
+    padding: 10px;
+    width: 96vw;
+    max-width: 96vw;
+  }
+  .lesson-list {
+    width: 96vw;
+    max-width: 96vw;
   }
   .lesson-row {
-    padding: 12px 14px;
-    font-size: 16px;
+    padding: 10px 8px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 400px) {
+  .teacher {
+    padding: 4px 1vw;
+  }
+  .header h1 {
+    font-size: 15px;
+  }
+  .new-btn {
+    font-size: 12px;
+    padding: 7px;
+    width: 94vw;
+    max-width: 94vw;
+  }
+  .lesson-list {
+    width: 94vw;
+    max-width: 94vw;
+  }
+  .lesson-row {
+    padding: 7px 4px;
+    font-size: 12px;
   }
 }
 </style>
