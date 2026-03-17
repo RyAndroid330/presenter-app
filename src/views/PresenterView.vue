@@ -765,14 +765,26 @@ async function toggleExpandSong(songId) {
     return
   }
   try {
+    console.log('[toggleExpandSong] songId:', songId)
     const res = await fetch('/api/songs/' + songId)
     const song = await res.json()
+    console.log('[toggleExpandSong] API song:', song)
+    if (!song || !Array.isArray(song.sections)) {
+      console.warn('[toggleExpandSong] No sections found for song:', songId, song)
+      expandedSongId.value = songId
+      expandedSections.value = []
+      return
+    }
     expandedSongId.value = songId
-    expandedSections.value = (song.sections || []).map(s => ({
+    expandedSections.value = song.sections.map(s => ({
       ...s,
       chords: s.chords ? (typeof s.chords === 'string' ? JSON.parse(s.chords) : s.chords) : {}
     }))
-  } catch (e) { console.error(e) }
+  } catch (e) {
+    console.error('[toggleExpandSong] Error:', e)
+    expandedSongId.value = songId
+    expandedSections.value = []
+  }
 }
 
 function presentSection(songId, idx, section) {
