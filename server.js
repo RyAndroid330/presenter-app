@@ -7,8 +7,19 @@ const db = require("./db");
 const songxml = require("./songxml");
 
 
+
 const app = express();
 const PORT = 3000;
+
+// Force HTTPS in production (for Render.com and similar hosts)
+if (process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    if (req.headers['x-forwarded-proto'] !== 'https') {
+      return res.redirect('https://' + req.headers.host + req.url);
+    }
+    next();
+  });
+}
 
 app.use(express.json());
 // List songs, optionally filter by language
