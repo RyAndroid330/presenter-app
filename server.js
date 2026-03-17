@@ -9,6 +9,7 @@ const songxml = require("./songxml");
 
 
 const app = express();
+app.set('trust proxy', 1);
 const PORT = 3000;
 
 // Force HTTPS in production (for Render.com and similar hosts)
@@ -56,7 +57,7 @@ passport.deserializeUser((user, done) => {
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: '/auth/google/callback'
+  callbackURL: process.env.GOOGLE_CALLBACK_URL || '/auth/google/callback'
 }, (accessToken, refreshToken, profile, done) => {
   // Here you can associate the Google account with a user record in your DB
   return done(null, profile);
