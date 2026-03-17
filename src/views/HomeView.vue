@@ -221,6 +221,62 @@ h1 {
   justify-content: space-between;
   padding: 0.7em 0;
   border-bottom: 1px solid #333;
+
+  @media (max-width: 900px) {
+    .main-content {
+      padding: 1.2em 0.7em;
+    }
+    .meetings-card {
+      padding: 1em;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .home-layout {
+      flex-direction: column;
+    }
+    .sidebar {
+      width: 100vw;
+      min-width: 0;
+      flex-direction: row;
+      padding-top: 0.5em;
+      box-shadow: none;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .sidebar.expanded {
+      width: 100vw;
+    }
+    .sidebar-buttons {
+      flex-direction: row;
+      gap: 0.5em;
+      justify-content: space-around;
+    }
+    .sidebar button {
+      font-size: 1em;
+      padding: 0.5em 0.7em;
+      border-radius: 10px;
+    }
+    .icon {
+      margin-right: 0.3em;
+      font-size: 1.2em;
+    }
+    .main-content {
+      padding: 1em 0.3em;
+    }
+    h1 {
+      font-size: 1.3em;
+    }
+    .meetings-card {
+      border-radius: 8px;
+      padding: 0.7em;
+    }
+    .meeting-row {
+      font-size: 0.98em;
+      padding: 0.5em 0;
+    }
+  }
 }
 .meeting-name {
   font-weight: 500;

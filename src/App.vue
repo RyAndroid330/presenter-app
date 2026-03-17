@@ -118,3 +118,31 @@ html, body, #app {
   }
 }
 </style>
+
+@media (max-width: 600px) {
+  html, body, #app {
+    width: 100vw;
+    height: auto;
+    min-height: 100vh;
+    font-size: 15px;
+  }
+  .app-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 8px 2px;
+  }
+  .user-info {
+    gap: 6px;
+  }
+  .user-avatar {
+    width: 28px;
+    height: 28px;
+  }
+  .login-btn, .logout-btn {
+    font-size: 15px;
+    padding: 5px 10px;
+    border-radius: 6px;
+  }
+}
+</style>

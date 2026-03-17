@@ -239,6 +239,43 @@ onMounted(loadLessons)
 }
 .lesson-row:hover { background: #4a4a4a; }
 
+@media (max-width: 900px) {
+  .teacher {
+    padding: 18px 6px;
+  }
+  .lesson-list {
+    max-width: 98vw;
+  }
+}
+
+@media (max-width: 600px) {
+  .teacher {
+    padding: 10px 2px;
+    min-height: unset;
+  }
+  .header {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .lesson-list {
+    width: 98vw;
+    max-width: 100vw;
+    padding: 0 2px;
+  }
+  .lesson-row {
+    font-size: 1em;
+    padding: 10px 8px;
+    border-radius: 7px;
+  }
+  .new-btn {
+    width: 98vw;
+    font-size: 1em;
+    padding: 10px;
+    border-radius: 8px;
+  }
+}
+
 .rename-input {
   flex: 1;
   padding: 4px 8px;

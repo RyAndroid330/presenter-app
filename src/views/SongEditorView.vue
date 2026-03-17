@@ -613,6 +613,54 @@ onMounted(() => {
 .move-btn:hover:not(:disabled) { color: #ccc; background: rgba(255,255,255,0.1); }
 .move-btn:disabled { opacity: 0.3; cursor: default; }
 
+@media (max-width: 900px) {
+  .editor-layout {
+    flex-direction: column;
+    padding: 10px 2px;
+  }
+  .sidebar {
+    width: 100%;
+    min-width: 0;
+    border-radius: 0 0 12px 12px;
+    margin-bottom: 12px;
+  }
+  .main-area {
+    width: 100%;
+    min-width: 0;
+    padding: 0 2px;
+  }
+}
+
+@media (max-width: 600px) {
+  .editor-layout {
+    flex-direction: column;
+    padding: 4px 0;
+  }
+  .sidebar {
+    width: 100vw;
+    min-width: 0;
+    border-radius: 0 0 8px 8px;
+    margin-bottom: 8px;
+    padding: 8px 2px;
+  }
+  .main-area {
+    width: 100vw;
+    min-width: 0;
+    padding: 0 2px;
+  }
+  .lyrics-bar textarea {
+    font-size: 1em;
+    min-width: 0;
+    width: 98vw;
+    max-width: 100vw;
+  }
+  .pk-box {
+    width: 98vw;
+    min-width: 0;
+    padding: 8px 2px;
+  }
+}
+
 .type-selector { display: flex; gap: 4px; flex-wrap: wrap; }
 
 .type-btn {
