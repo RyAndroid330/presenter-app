@@ -147,11 +147,11 @@ onUnmounted(() => {
 <style scoped>
 .home-layout {
   display: flex;
-  min-height: 100vh;
+  min-height: 90vh;
   background: #181818;
 }
 .sidebar {
-  width: 64px;
+  width: 75px;
   background: #232323;
   color: #fff;
   transition: width 0.2s;
