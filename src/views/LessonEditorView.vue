@@ -711,6 +711,7 @@ onUnmounted(() => {
   padding: 20px;
   box-sizing: border-box;
   overflow: hidden;
+  min-height: 0;
 }
 
 .sidebar {
@@ -815,13 +816,15 @@ select:hover, input:hover, button:hover { background: #555; }
 
 .text-input {
   width: 100%;
-  flex: 1;
+  flex: 0 1 320px;
+  max-height: 38vh;
+  min-height: 80px;
   background: rgba(255,255,255,0.05);
   border-radius: 12px;
   padding: 20px;
   text-align: center;
   font-weight: bold;
-  overflow: hidden;
+  overflow: auto;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -1003,18 +1006,21 @@ select:hover, input:hover, button:hover { background: #555; }
     padding: 8px 2px;
   }
   .main-area {
-    width: 100vw;
-    min-width: 0;
-    padding: 0 2px;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    padding: 8px;
   }
   .text-input {
+    max-height: 28vh;
+    min-height: 60px;
+    flex-basis: 180px;
+  }
     font-size: 1em;
     min-width: 0;
     width: 98vw;
     max-width: 100vw;
   }
-}
-  margin-left: 4px;
 }
 
 .slide-move-btn {

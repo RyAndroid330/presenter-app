@@ -165,6 +165,8 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: 1em;
+  height: 100%;
+  justify-content: center;
 }
 .sidebar button {
   display: flex;
