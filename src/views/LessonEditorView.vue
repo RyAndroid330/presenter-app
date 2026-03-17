@@ -14,8 +14,10 @@
     </div>
 
     <div class="sidebar">
-      <button class="back-btn" @click="goBack">&#x2190; Back</button>
-      <button class="save-back-btn" @click="saveAndBack">&#x2714; Save &amp; Back</button>
+      <div class="sidebar-top-row">
+        <button class="back-btn" @click="goBack">&#x2190; Back</button>
+        <button class="save-back-btn" @click="saveAndBack">&#x2714; Save &amp; Back</button>
+      </div>
 
       <label class="field-label">Lesson Name</label>
       <div class="name-row">
@@ -721,9 +723,17 @@ onUnmounted(() => {
   border-left: 1px solid #444;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   box-sizing: border-box;
   overflow-y: auto;
   gap: 10px;
+}
+.sidebar .sidebar-top-row {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 10px;
 }
 
 .back-btn, .save-back-btn {
@@ -816,9 +826,9 @@ select:hover, input:hover, button:hover { background: #555; }
 
 .text-input {
   width: 100%;
-  flex: 0 1 320px;
-  max-height: 38vh;
+  flex: 1 1 auto;
   min-height: 80px;
+  max-height: 100%;
   background: rgba(255,255,255,0.05);
   border-radius: 12px;
   padding: 20px;
