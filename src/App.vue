@@ -117,7 +117,6 @@ html, body, #app {
     padding: 8px 8px;
   }
 }
-</style>
 
 @media (max-width: 600px) {
   html, body, #app {
