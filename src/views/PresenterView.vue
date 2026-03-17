@@ -766,25 +766,35 @@ async function toggleExpandSong(songId) {
   }
   try {
     console.log('[toggleExpandSong] songId:', songId)
-    const res = await fetch('/api/songs/' + songId)
-    if (!res.ok) {
-      console.error(`[toggleExpandSong] API error: ${res.status} ${res.statusText}`)
-      alert('Could not load song data. (API error)')
-      expandedSongId.value = songId
-      expandedSections.value = []
-      return
+    let song = null;
+    // Try DB song first
+    try {
+      const res = await fetch('/api/songs/' + songId)
+      if (res.ok && (res.headers.get('content-type') || '').includes('application/json')) {
+        song = await res.json()
+      }
+    } catch (e) { /* ignore, try XML fallback */ }
+
+    // If not found, try XML song fallback
+    if (!song) {
+      // Try to find the XML song object from allSongs or sessionSongs
+      let xml = null;
+      if (Array.isArray(allSongs?.value)) {
+        xml = allSongs.value.find(x => x.id === songId || x.filename === songId)
+      }
+      if (!xml && Array.isArray(sessionSongs?.value)) {
+        xml = sessionSongs.value.find(x => x.id === songId || x.filename === songId)
+      }
+      if (xml && xml.language && xml.filename) {
+        try {
+          const res = await fetch(`/api/song-library/${xml.language}/${xml.filename}`)
+          if (res.ok && (res.headers.get('content-type') || '').includes('application/json')) {
+            song = await res.json()
+          }
+        } catch (e) { /* ignore */ }
+      }
     }
-    const contentType = res.headers.get('content-type') || '';
-    if (!contentType.includes('application/json')) {
-      const text = await res.text();
-      console.error('[toggleExpandSong] Non-JSON response:', text);
-      alert('Could not load song data. (Non-JSON response)')
-      expandedSongId.value = songId
-      expandedSections.value = []
-      return
-    }
-    const song = await res.json()
-    console.log('[toggleExpandSong] API song:', song)
+
     if (!song || !Array.isArray(song.sections)) {
       console.warn('[toggleExpandSong] No sections found for song:', songId, song)
       expandedSongId.value = songId
