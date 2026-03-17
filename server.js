@@ -463,7 +463,7 @@ app.use((req, res) => {
 
 db.init().then(() => {
   app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+    console.log(`Server running at https://localhost:${PORT}`);
   });
 }).catch(err => {
   console.error("Failed to initialise database", err);

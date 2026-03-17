@@ -5,9 +5,9 @@ export default defineConfig({
   plugins: [vue()],
   server: {
     proxy: {
-      '/api': 'http://localhost:3000',
-      '/auth': 'http://localhost:3000',
-      '/logout': 'http://localhost:3000'
+      '/api': 'https://localhost:3000',
+      '/auth': 'https://localhost:3000',
+      '/logout': 'https://localhost:3000'
     }
   }
 })
