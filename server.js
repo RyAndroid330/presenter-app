@@ -60,7 +60,7 @@ app.get('/auth/google/callback', passport.authenticate('google', {
 }), (req, res) => {
   // Redirect to Vite dev server in development, or / in production
   if (process.env.NODE_ENV !== 'production') {
-    return res.redirect('http://localhost:5173');
+    return res.redirect('https://localhost:5173');
   }
   res.redirect('/');
 });
