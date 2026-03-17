@@ -11,6 +11,15 @@ const app = express();
 const PORT = 3000;
 
 app.use(express.json());
+// List songs, optionally filter by language
+app.get("/api/songs", (req, res) => {
+  const lang = req.query.lang;
+  let songs = db.listSongs();
+  if (lang) {
+    songs = songs.filter(s => s.language === lang);
+  }
+  res.json(songs);
+});
 
 // Session middleware
 require('dotenv').config();
