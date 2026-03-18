@@ -129,6 +129,15 @@ app.post("/api/songs", (req, res) => {
 });
 
 /* -----------------------
+   API: GET SINGLE SONG (with sections)
+----------------------- */
+app.get("/api/songs/:id", (req, res) => {
+  const song = db.getSong(parseInt(req.params.id));
+  if (!song) return res.status(404).json({ error: "Song not found" });
+  res.json(song);
+});
+
+/* -----------------------
    API: UPDATE SONG
 ----------------------- */
 app.patch("/api/songs/:id", (req, res) => {
