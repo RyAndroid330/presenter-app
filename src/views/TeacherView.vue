@@ -1,6 +1,9 @@
 <template>
   <div class="teacher">
-    <h1>Lessons</h1>
+    <div class="header">
+      <button class="back-btn" @click="$router.push('/')">&#x2190; Home</button>
+      <h1>Lessons</h1>
+    </div>
 
     <button class="new-btn" @click="createLesson">+ New Lesson</button>
 
@@ -102,234 +105,75 @@ onMounted(loadLessons)
 .teacher {
   height: 100%;
   overflow-y: auto;
-  background: #181818;
-  color: #e0e0e0;
-  font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
+  background: var(--bg-base);
+  color: var(--text-primary);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 30px 20px;
-  box-sizing: border-box;
+  padding: 32px 20px;
 }
 
-.header {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-.back-btn {
-  background: none;
-  color: var(--accent-color);
-  border: none;
-  font-size: 1.1em;
-  cursor: pointer;
-  border-radius: 16px;
-  padding: 0.5em 1.2em;
-  transition: background 0.2s, color 0.2s;
-}
-.back-btn:hover {
-  background: var(--accent-color);
-  color: #181818;
-}
+h1 { font-size: 1.8em; font-weight: 700; margin: 0 0 20px; }
+
 .new-btn {
-  background: var(--accent-color);
+  background: var(--accent);
   color: #fff;
   border: none;
   border-radius: 24px;
-  padding: 0.5em 1.5em;
+  padding: 8px 22px;
   font-weight: 600;
+  font-size: 14px;
   cursor: pointer;
-  margin: 1em 0;
-  transition: background 0.2s;
+  margin-bottom: 20px;
 }
-.new-btn:hover {
-  background: var(--accent-color-hover);
-}
+.new-btn:hover { background: var(--accent-hover); }
+
 .lesson-list {
   width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
-}
-.lesson-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #232323;
-  border-radius: 12px;
-  padding: 0.7em 1em;
-  margin-bottom: 0.7em;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-.rename-input {
-  background: #222;
-  color: #e0e0e0;
-  border: 1px solid #333;
-  border-radius: 8px;
-  padding: 0.4em 0.8em;
-}
-.delete-btn {
-  background: none;
-  color: #e74c3c;
-  border: none;
-  font-size: 1.1em;
-  cursor: pointer;
-  border-radius: 8px;
-  padding: 0.2em 0.7em;
-  transition: background 0.2s, color 0.2s;
-}
-.delete-btn:hover {
-  background: #e74c3c;
-  color: #fff;
-}
-.empty {
-  color: #b3b3b3;
-  text-align: center;
-  margin-top: 2em;
-}
-
-.header h1 {
-  margin: 0;
-  font-size: 28px;
-}
-
-.back-btn {
-  padding: 8px 18px;
-  border-radius: 10px;
-  border: none;
-  background: #444;
-  color: white;
-  font-size: 18px;
-  cursor: pointer;
-}
-.back-btn:hover { background: #666; }
-
-.new-btn {
-  width: 400px;
-  max-width: 90vw;
-  padding: 14px;
-  font-size: 18px;
-  margin-bottom: 16px;
-  border-radius: 12px;
-  border: none;
-  background: #3a5a3a;
-  color: white;
-  cursor: pointer;
-}
-.new-btn:hover { background: #4a7a4a; }
-
-.lesson-list {
-  width: 400px;
-  max-width: 90vw;
+  max-width: 520px;
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
-
 .lesson-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 14px 18px;
-  background: #3a3a3a;
-  border-radius: 10px;
+  justify-content: space-between;
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  padding: 12px 16px;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 15px;
+  transition: background var(--transition);
 }
-.lesson-row:hover { background: #4a4a4a; }
-
-@media (max-width: 900px) {
-  .teacher {
-    padding: 18px 6px;
-  }
-  .lesson-list {
-    max-width: 98vw;
-  }
-}
-
-@media (max-width: 600px) {
-  .teacher {
-    padding: 10px 2px;
-    min-height: unset;
-  }
-  .header {
-    flex-direction: column;
-    gap: 8px;
-    align-items: flex-start;
-  }
-  .lesson-list {
-    width: 98vw;
-    max-width: 100vw;
-    padding: 0 2px;
-  }
-  .lesson-row {
-    font-size: 1em;
-    padding: 10px 8px;
-    border-radius: 7px;
-  }
-  .new-btn {
-    width: 98vw;
-    font-size: 1em;
-    padding: 10px;
-    border-radius: 8px;
-  }
-}
+.lesson-row:hover { background: var(--bg-hover); }
 
 .rename-input {
   flex: 1;
   padding: 4px 8px;
-  border-radius: 6px;
-  border: 1px solid #666;
-  background: #2a2a2a;
-  color: white;
-  font-size: 18px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: 15px;
   outline: none;
 }
-.rename-input:focus { border-color: #888; }
 
 .delete-btn {
   background: none;
   border: none;
-  color: #888;
-  font-size: 16px;
-  padding: 4px 8px;
+  color: var(--text-faint);
+  font-size: 14px;
   cursor: pointer;
-  border-radius: 6px;
+  padding: 4px 6px;
+  border-radius: var(--radius-sm);
 }
-.delete-btn:hover {
-  color: #ff6666;
-  background: rgba(255,100,100,0.15);
-}
+.delete-btn:hover { color: var(--danger); background: var(--danger-hover); }
 
-.empty {
-  text-align: center;
-  color: #777;
-  font-size: 16px;
-  padding: 20px;
-}
+.empty { color: var(--text-faint); font-style: italic; text-align: center; padding: 24px; }
 
 @media (max-width: 600px) {
-  .teacher {
-    padding: 15px 10px;
-    overflow-y: auto;
-  }
-  .header {
-    gap: 12px;
-    margin-bottom: 20px;
-  }
-  .header h1 {
-    font-size: 22px;
-  }
-  .back-btn {
-    padding: 8px 14px;
-    font-size: 16px;
-  }
-  .new-btn {
-    font-size: 16px;
-    padding: 12px;
-  }
-  .lesson-row {
-    padding: 12px 14px;
-    font-size: 16px;
-  }
+  .teacher { padding: 20px 12px; }
+  h1 { font-size: 1.4em; }
 }
 </style>

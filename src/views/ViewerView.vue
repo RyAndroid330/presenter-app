@@ -195,203 +195,75 @@ onUnmounted(() => {
 
 <style scoped>
 .viewer {
-  min-height: 100vh;
-  background: #181818;
-  color: #e0e0e0;
-  font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
-}
-.waiting-message {
-  color: #b3b3b3;
-  font-size: 1.3em;
-  margin-top: 2em;
-}
-.display {
-  font-size: 2.5em;
-  background: #232323;
-  border-radius: 16px;
-  padding: 2em;
-  margin: 2em auto;
-  max-width: 900px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-.chord-toggle {
-  position: fixed;
-  bottom: 2em;
-  right: 2em;
-  background: var(--accent-color);
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  width: 56px;
-  height: 56px;
-  font-size: 2em;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.chord-toggle.active, .chord-toggle:hover {
-  background: var(--accent-color-hover);
-}
-.chord-sheet {
-  background: #232323;
-  border-radius: 16px;
-  padding: 1.5em;
-  margin: 2em auto;
-  max-width: 900px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-.cs-chords {
-  color: var(--accent-color);
-  font-weight: bold;
-}
-.cs-text {
-  color: #e0e0e0;
-}
-
-.viewer {
   height: 100%;
   width: 100%;
-  margin: 0;
-  background: #2f2f2f;
-  font-family: Arial, sans-serif;
-  color: white;
+  background: var(--bg-raised);
+  color: var(--text-primary);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   overflow: hidden;
   position: relative;
 }
 
+.waiting-message {
+  color: var(--text-faint);
+  font-size: 1.2em;
+}
+
 .display {
-  width: 75dvw;
-  height: 50dvh;
+  width: 80%;
+  max-width: 900px;
+  max-height: 80%;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   text-align: center;
+  font-weight: bold;
+  font-size: clamp(20px, 4vw, 64px);
   white-space: pre-wrap;
   word-break: break-word;
-  line-height: 1.1;
+  line-height: 1.15;
+  color: var(--text-primary);
 }
 
 /* Chord sheet */
 .chord-sheet {
   font-family: 'Courier New', Courier, monospace;
-  font-size: clamp(14px, 2.5vw, 40px);
+  font-size: clamp(13px, 2vw, 36px);
   white-space: pre;
-  padding: 30px;
-  max-height: 90vh;
-  overflow-y: auto;
-  line-height: 1.3;
+  overflow: auto;
+  padding: 24px;
+  max-width: 95vw;
+  max-height: 88%;
 }
+.cs-chords { color: var(--accent); font-weight: bold; line-height: 1.2; }
+.cs-text   { color: var(--text-primary); line-height: 1.5; }
 
-.cs-chords {
-  color: #4fc3f7;
-  font-weight: bold;
-}
-
-.cs-text {
-  margin-bottom: 0.6em;
-}
-
-/* Toggle button */
+/* Music toggle button */
 .chord-toggle {
   position: fixed;
   bottom: 24px;
   right: 24px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
   width: 52px;
   height: 52px;
-  border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.25);
-  background: rgba(0,0,0,0.45);
-  color: rgba(255,255,255,0.5);
-  font-size: 26px;
+  font-size: 1.6em;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
   cursor: pointer;
-  z-index: 100;
+  transition: background var(--transition);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
-  padding: 0;
-  line-height: 1;
+  z-index: 10;
 }
+.chord-toggle:hover, .chord-toggle.active { background: var(--accent-hover); }
 
-.chord-toggle:hover {
-  background: rgba(0,0,0,0.65);
-  border-color: rgba(255,255,255,0.4);
+@media (max-width: 600px) {
+  .display { font-size: clamp(18px, 6vw, 40px); width: 95%; }
+  .chord-toggle { width: 44px; height: 44px; font-size: 1.3em; bottom: 16px; right: 16px; }
 }
-
-.chord-toggle.active {
-  background: rgba(79,195,247,0.25);
-  border-color: #4fc3f7;
-  color: #4fc3f7;
-}
-
-@media (max-width: 480px) {
-  .viewer {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 0 2px;
-    height: auto;
-    min-height: 100vh;
-  }
-  .display {
-    width: 98vw;
-    height: auto;
-    min-height: 30vh;
-    font-size: 1.1em;
-    padding: 0.5em 0.2em;
-    border-radius: 8px;
-  }
-  .chord-sheet {
-    max-width: 100vw;
-    padding: 6px;
-    font-size: clamp(11px, 4vw, 18px);
-    border-radius: 8px;
-  }
-  .waiting-message {
-    font-size: 1.1em;
-    top: 30%;
-  }
-  .chord-toggle {
-    width: 38px;
-    height: 38px;
-    font-size: 1em;
-    bottom: 8px;
-    right: 8px;
-  }
-}
-
-@media (max-width: 768px) {
-  .display {
-    width: 92vw;
-    height: 70vh;
-  }
-  .chord-sheet {
-    padding: 12px;
-    font-size: clamp(12px, 3.5vw, 24px);
-    white-space: pre-wrap;
-    word-break: break-word;
-  }
-  .chord-toggle {
-    bottom: 16px;
-    right: 16px;
-    width: 46px;
-    height: 46px;
-    font-size: 24px;
-  }
-}
-
-.waiting-message {
-  font-size: 2.2rem;
-  color: #bbb;
-  text-align: center;
-  width: 100vw;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-}
-
 </style>

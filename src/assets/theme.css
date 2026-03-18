@@ -1,0 +1,84 @@
+/* ─────────────────────────────────────────
+   StudyLink · Global Theme
+   Single source of truth — no layout here,
+   only tokens, resets, and utility classes.
+───────────────────────────────────────── */
+
+/* ── Design tokens ── */
+:root {
+  --accent:        #1db954;
+  --accent-hover:  #1ed760;
+  --accent-dim:    rgba(29, 185, 84, 0.12);
+
+  --bg-base:       #181818;
+  --bg-surface:    #232323;
+  --bg-raised:     #2f2f2f;
+  --bg-input:      #2a2a2a;
+  --bg-hover:      #3a3a3a;
+  --bg-active:     #444444;
+
+  --text-primary:  #e0e0e0;
+  --text-muted:    #aaaaaa;
+  --text-faint:    #666666;
+
+  --border:        #333333;
+  --border-light:  #444444;
+
+  --danger:        #e74c3c;
+  --danger-hover:  rgba(231, 76, 60, 0.15);
+
+  --radius-sm:     6px;
+  --radius:        8px;
+  --radius-lg:     12px;
+  --radius-xl:     16px;
+
+  --nav-h:         44px;
+
+  --transition:    0.15s ease;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-raised);
+  color: var(--text-primary);
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  width: 100dvw;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bg-active); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #555; }
+
+/* ── Links ── */
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-hover); }
+
+/* ── Global form element reset ──
+   Components override per their scoped styles.
+   These just ensure a sane base. */
+input, textarea, select, button {
+  font-family: inherit;
+  font-size: inherit;
+  margin: 0;
+}
+
+/* ── Utility: visually hidden on mobile ── */
+@media (max-width: 600px) {
+  .hide-mobile { display: none !important; }
+}

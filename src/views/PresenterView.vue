@@ -20,6 +20,9 @@
         <button :class="{active: openPanel==='timer'}" @click="togglePanel('timer')" title="Timer Tool">
           <span class="icon material-icons">timer</span>
         </button>
+        <button class="back-btn" @click="$router.push('/')" title="Home">
+          <span class="icon material-icons">arrow_back</span>
+        </button>
       </div>
       <div class="sidebar-panels">
         <div v-show="openPanel==='main'" class="sidebar-panel">
@@ -859,74 +862,17 @@ onUnmounted(() => {
 
 
 </script>
-<style>
-.presenter-layout {
-  min-height: 100vh;
-  background: #181818;
-  color: #e0e0e0;
-  font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
-}
-.presenter-area, .right-sidebar {
-  background: #232323;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  margin: 1em;
-  padding: 1.5em;
-}
-.sidebar-icons button, .back-btn {
-  background: none;
-  color: var(--accent-color);
-  border: none;
-  font-size: 1.1em;
-  cursor: pointer;
-  border-radius: 16px;
-  padding: 0.5em 1.2em;
-  transition: background 0.2s, color 0.2s;
-}
-.sidebar-icons button.active, .sidebar-icons button:hover, .back-btn:hover {
-  background: var(--accent-color);
-  color: #181818;
-}
-.meeting-input, .panel-select, .quick-add-text, .quick-add-select, .search-input, .lang-select, .bible-lang-select {
-  background: #222;
-  color: #e0e0e0;
-  border: 1px solid #333;
-  border-radius: 8px;
-  padding: 0.4em 0.8em;
-}
-.meeting-list, .slide-list, .session-songs, .item-list {
-  background: #232323;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  margin-bottom: 1em;
-}
-.meeting-item.active, .slide-item.active, .session-song.active, .ss-section.active {
-  background: #282828;
-  color: var(--accent-color);
-}
-.meeting-delete-btn, .edit-btn, .delete-btn, .slide-delete-btn, .slide-move-btn, .add-btn {
-  background: none;
-  color: #e74c3c;
-  border: none;
-  font-size: 1.1em;
-  cursor: pointer;
-  border-radius: 8px;
-  padding: 0.2em 0.7em;
-  transition: background 0.2s, color 0.2s;
-}
-.meeting-delete-btn:hover, .edit-btn:hover, .delete-btn:hover, .slide-delete-btn:hover, .slide-move-btn:hover, .add-btn:hover {
-  background: #e74c3c;
-  color: #fff;
-}
 
+<style scoped>
+/* ── Layout ── */
 .presenter-layout {
   display: flex;
   height: 100%;
   width: 100%;
   overflow: hidden;
-  background-color: #2f2f2f;
-  font-family: Arial, sans-serif;
-  color: white;
+  background: var(--bg-raised);
+  color: var(--text-primary);
+  font-family: inherit;
 }
 
 .presenter-area {
@@ -942,390 +888,287 @@ onUnmounted(() => {
 .text-display {
   width: 100%;
   flex: 1;
-  background: rgba(255,255,255,0.05);
-  border-radius: 12px;
-  padding: 16px;
-  text-align: center;
-  font-weight: bold;
-  overflow: hidden;
+  background: rgba(255,255,255,0.04);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
+  text-align: center;
+  font-weight: bold;
+  font-size: clamp(14px, 3vw, 52px);
   white-space: pre-wrap;
   word-break: break-word;
-  line-height: 1.1;
-  color: white;
+  line-height: 1.15;
+  color: var(--text-primary);
+  overflow: hidden;
+  padding: 16px;
 }
 
-/* legacy .sidebar not used in presenter but keep it safe */
-.sidebar {
-  display: none;
-}
-
-.time-slide-btn {
-  width: 100%;
-  margin: 8px;
-  padding: 8px 0;
-  background: #4fc3f7;
-  color: #222;
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.time-slide-btn:hover {
-  background: #039be5;
-  color: #fff;
-}
-.time-slide-form {
+/* ── Right sidebar: icon strip + fly-out panel ── */
+.right-sidebar {
+  flex-shrink: 0;
+  width: 52px;
+  height: 100%;
+  position: relative;
   display: flex;
+  flex-direction: column;
+  background: var(--bg-surface);
+  border-left: 1px solid var(--border);
+  z-index: 20;
+}
+
+/* Vertical icon strip */
+.sidebar-icons {
+  display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 6px;
-  margin-bottom: 10px;
+  padding: 10px 0;
+  width: 52px;
+  height: 100%;
+  overflow: hidden;
 }
-.time-slide-input {
-  flex: 2;
-  padding: 4px 8px;
-  border-radius: 4px;
-  border: 1px solid #888;
-  margin: 8px;
-}
-.time-slide-num {
+
+.sidebar-icons button {
+  background: none;
+  border: none;
+  color: var(--text-faint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 40px;
-  padding: 4px 4px;
-  border-radius: 4px;
-  border: 1px solid #888;
-  text-align: right;
+  height: 40px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+  flex-shrink: 0;
 }
+.sidebar-icons button:hover { background: var(--bg-hover); color: var(--text-primary); }
+.sidebar-icons button.active { background: var(--accent-dim); color: var(--accent); }
+.icon { font-size: 22px; }
+
+/* Panel flies LEFT over the presenter area */
+.sidebar-panels {
+  position: absolute;
+  top: 0;
+  right: 52px;
+  width: 300px;
+  height: 100%;
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border);
+  box-shadow: -4px 0 20px rgba(0,0,0,0.4);
+  display: flex;
+  flex-direction: column;
+  z-index: 21;
+}
+
+.sidebar-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  padding: 14px 12px 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  gap: 12px;
+}
+
+.clear-panel {
+  height: auto;
+  padding: 8px 12px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  margin-top: auto;
+  background: none;
+}
+
+/* ── Panel content styles ── */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.panel:first-child { border-top: none; padding-top: 0; }
+
+.section-header {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 2px;
+}
+
+/* Inputs */
+.meeting-input, .panel-select, .quick-add-text,
+.quick-add-select, .search-input, .lang-select, .bible-lang-select {
+  width: 100%;
+  padding: 7px 9px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: inherit;
+}
+.quick-add-text { resize: vertical; min-height: 60px; }
+select option { background: var(--bg-surface); }
+
+.quick-add-block { display: flex; flex-direction: column; gap: 6px; }
+.quick-add-btn {
+  padding: 8px;
+  border-radius: var(--radius);
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.quick-add-btn:hover { background: var(--accent-hover); }
+.quick-add-btn:disabled { opacity: 0.4; cursor: default; }
+
+/* Meeting list */
+.meeting-list { display: flex; flex-direction: column; gap: 3px; }
+.meeting-item {
+  display: flex;
+  align-items: center;
+  padding: 6px 8px;
+  border-radius: var(--radius);
+  background: var(--bg-hover);
+  cursor: pointer;
+  font-size: 13px;
+}
+.meeting-item:hover { background: var(--bg-active); }
+.meeting-item.active { background: var(--accent-dim); color: var(--accent); }
+.meeting-item-text { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.meeting-delete-btn { background: none; border: none; color: var(--text-faint); font-size: 12px; padding: 2px 4px; cursor: pointer; border-radius: 3px; }
+.meeting-delete-btn:hover { color: var(--danger); background: var(--danger-hover); }
+
+/* Slide / session lists */
+.slide-list, .session-songs { display: flex; flex-direction: column; gap: 3px; }
+.slide-item, .ss-title {
+  display: flex;
+  align-items: center;
+  padding: 5px 8px;
+  border-radius: var(--radius);
+  background: var(--bg-hover);
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+.slide-item:hover, .ss-title:hover { background: var(--bg-active); }
+.slide-item.active, .ss-title.active { background: var(--accent-dim); color: var(--accent); }
+.slide-item-text { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.ss-title { font-weight: 600; font-size: 13px; }
+.ss-sections { display: flex; flex-direction: column; gap: 2px; padding-left: 10px; margin-top: 2px; }
+.ss-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  cursor: pointer;
+  font-size: 12px;
+}
+.ss-section:hover { background: var(--bg-hover); }
+.ss-section.active { background: var(--accent-dim); }
+.ss-section strong { color: var(--accent); font-size: 11px; }
+.ss-preview { color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Timer */
+.time-slide-form { display: flex; flex-direction: column; gap: 6px; }
+.time-slide-inputs { display: flex; gap: 6px; align-items: center; }
+.time-slide-input { flex: 1; }
+.time-slide-num { width: 52px; text-align: right; }
 .time-slide-send {
-  padding: 4px 10px;
-  border-radius: 4px;
+  padding: 8px;
+  border-radius: var(--radius);
   border: none;
   background: #43a047;
   color: #fff;
   font-weight: bold;
   cursor: pointer;
-  transition: background 0.2s;
-  margin: 8px;
+  font-size: 13px;
 }
-
-.time-slide-send:hover {
-  background: #2e7031;
-}
-
-.back-btn {
-  padding: 10px;
-  font-size: 15px;
-  font-weight: bold;
-  border-radius: 8px;
-  border: none;
-  background: #444;
-  color: white;
-  cursor: pointer;
-  text-align: center;
-}
-.back-btn:hover { background: #555; }
-
-.panel {
-  border-top: 1px solid #444;
-  padding-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.section-header {
-  font-size: 14px;
-  font-weight: bold;
-  color: #ccc;
-}
-
-.meeting-input {
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  background: rgba(255,255,255,0.08);
-  color: white;
-  font-size: 15px;
-  font-weight: bold;
-}
-
-.panel-select {
+.time-slide-send:hover { background: #2e7031; }
+.time-slide-send:disabled { opacity: 0.4; cursor: default; }
+.time-slide-btn {
   width: 100%;
-  padding: 8px;
-  border-radius: 8px;
+  padding: 7px;
+  border-radius: var(--radius);
   border: none;
-  background: #444;
-  color: white;
+  background: var(--bg-active);
+  color: var(--text-primary);
   font-size: 13px;
-}
-
-select, button {
-  padding: 6px;
-  border-radius: 8px;
-  border: none;
-  background: #444;
-  color: white;
   cursor: pointer;
-  font-size: 14px;
-}
-select option { background: #444; color: white; }
-select:hover, button:hover { background: #555; }
-
-.slide-list {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
   margin-top: 4px;
 }
+.time-slide-btn:hover { background: #555; }
 
-.slide-item {
-  display: flex;
-  align-items: center;
-  padding: 6px 8px;
-  border-radius: 8px;
-  background: #3a3a3a;
-  cursor: pointer;
-  font-size: 13px;
-  color: #ddd;
-}
-.slide-item:hover { background: #4a4a4a; }
-.slide-item.active { background: #555; color: white; border-left: 3px solid #4fc3f7; }
-
-.slide-item-text {
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.session-songs {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin-top: 4px;
-}
-
-.ss-title {
-  padding: 6px 8px;
-  border-radius: 8px;
-  background: #3a3a3a;
-  cursor: pointer;
-  font-size: 13px;
-  color: #ddd;
-  font-weight: bold;
-}
-.ss-title:hover { background: #4a4a4a; }
-.ss-title.active { background: #555; color: white; }
-
-.ss-sections {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding-left: 12px;
-  margin-top: 2px;
-}
-
-.ss-section {
-  padding: 5px 8px;
-  border-radius: 6px;
-  background: #333;
-  cursor: pointer;
-  font-size: 12px;
-  color: #ccc;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.ss-section:hover { background: #444; }
-.ss-section.active {
-  background: #4a4a4a;
-  border-left: 3px solid #4fc3f7;
-}
-.ss-section strong {
-  text-transform: capitalize;
-  color: #4fc3f7;
-  font-size: 11px;
-}
-.ss-preview {
-  color: #aaa;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
+/* Blank slide / clear */
 .clear-btn {
-  padding: 10px;
-  font-size: 14px;
-  font-weight: bold;
-  border-radius: 8px;
+  width: 100%;
+  padding: 9px;
+  border-radius: var(--radius);
   border: none;
   background: #553333;
   color: #ffaaaa;
+  font-size: 13px;
+  font-weight: bold;
   cursor: pointer;
-  text-align: center;
-  margin-top: auto;
 }
 .clear-btn:hover { background: #774444; }
 
-.meeting-list {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  margin-top: 4px;
-}
+/* Bible */
+.bible-selector-group { display: flex; flex-direction: column; gap: 8px; }
+.field-label { font-size: 11px; color: var(--text-faint); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.field-label .hint { text-transform: none; font-weight: normal; letter-spacing: 0; }
 
-.meeting-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 6px 8px;
-  border-radius: 8px;
-  background: #3a3a3a;
-  cursor: pointer;
-  font-size: 13px;
-  color: #ddd;
+.bible-grid { display: flex; flex-wrap: wrap; gap: 4px; }
+.chapter-btn, .verse-btn {
+  border: none; border-radius: var(--radius-sm);
+  background: var(--bg-active); color: var(--text-primary);
+  cursor: pointer; font-size: 12px; padding: 0;
+  display: flex; align-items: center; justify-content: center;
 }
-.meeting-item:hover { background: #4a4a4a; }
-.meeting-item.active { background: #555; color: white; border-left: 3px solid #4fc3f7; }
+.chapter-btn { width: 34px; height: 34px; }
+.verse-btn   { width: 30px; height: 30px; }
+.chapter-btn.active, .verse-btn.active { background: var(--accent); color: #fff; }
+.verse-label { font-size: 12px; color: var(--text-muted); }
+.bible-version-select { width: 100%; }
+.bible-selector-margin { margin-bottom: 4px; }
 
-.meeting-item-text {
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.meeting-delete-btn {
-  background: none;
-  border: none;
-  color: #888;
-  font-size: 12px;
-  padding: 2px 4px;
-  cursor: pointer;
-  border-radius: 4px;
-}
-.meeting-delete-btn:hover { color: #ff6666; background: rgba(255,100,100,0.15); }
-
-/* ── Right sidebar: icon strip + slide-out panel ── */
-.right-sidebar {
-  position: relative;
-  flex-shrink: 0;
-  width: 56px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  background: #232323;
-  box-shadow: -2px 0 8px rgba(0,0,0,0.15);
-  z-index: 20;
-}
-
-/* Vertical icon strip */
-.right-sidebar .sidebar-icons {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 0;
-  width: 56px;
-  height: 100%;
-  z-index: 22;
-  background: #232323;
-}
-
-.right-sidebar .sidebar-icons button {
-  background: none;
-  border: none;
-  color: #ccc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-  flex-shrink: 0;
-}
-.right-sidebar .sidebar-icons button:hover { background: #3a3a3a; color: #fff; }
-.right-sidebar .sidebar-icons button.active {
-  background: rgba(79,195,247,0.15);
-  color: var(--accent-color, #4fc3f7);
-}
-.right-sidebar .icon { font-size: 24px; }
-
-/* Panel flies out to the LEFT of the icon strip */
-.right-sidebar .sidebar-panels {
-  position: absolute;
-  top: 0;
-  right: 56px;      /* anchored to left edge of icon strip */
-  width: 300px;
-  height: 100%;
-  background: #1e1e1e;
-  box-shadow: -4px 0 16px rgba(0,0,0,0.3);
-  display: flex;
-  flex-direction: column;
-  z-index: 21;
-  border-right: 1px solid #333;
-}
-
-.right-sidebar .sidebar-panel {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 0;
-  padding: 16px 14px 14px;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-.right-sidebar .clear-panel {
-  height: auto;
-  padding: 10px 14px;
-  background: none;
-  box-shadow: none;
-  border-top: 1px solid #333;
-  margin-top: auto;
-  flex-shrink: 0;
-}
-
-/* ── Mobile portrait: stack, icons become bottom bar ── */
+/* ── Mobile portrait ── */
 @media (max-width: 768px) and (orientation: portrait), (max-width: 500px) {
   .presenter-layout { flex-direction: column; }
-
-  .presenter-area {
-    width: 100%;
-    height: 42%;
-    flex-shrink: 0;
-    flex: none;
-    padding: 8px;
-    overflow: hidden;
-  }
-  .text-display { padding: 10px; border-radius: 8px; }
+  .presenter-area { height: 42%; flex: none; flex-shrink: 0; padding: 8px; overflow: hidden; }
+  .text-display { font-size: clamp(14px, 5vw, 32px); padding: 10px; border-radius: var(--radius); }
 
   .right-sidebar {
     width: 100%;
     height: 58%;
     flex-shrink: 0;
-    flex-direction: column-reverse;  /* icons at bottom */
-    box-shadow: 0 -2px 8px rgba(0,0,0,0.2);
+    flex-direction: column-reverse;
+    border-left: none;
+    border-top: 1px solid var(--border);
   }
-
-  /* Horizontal icon bar across the bottom */
-  .right-sidebar .sidebar-icons {
+  .sidebar-icons {
     width: 100%;
-    height: 50px;
+    height: 48px;
     flex-direction: row;
     justify-content: space-around;
     padding: 0 8px;
     gap: 0;
-    border-top: 1px solid #333;
+    border-top: 1px solid var(--border);
     flex-shrink: 0;
   }
-
-  /* Panel fills space above the icon bar */
-  .right-sidebar .sidebar-panels {
+  .sidebar-panels {
     position: relative;
     right: unset;
     top: unset;
@@ -1335,79 +1178,8 @@ select:hover, button:hover { background: #555; }
     min-height: 0;
     box-shadow: none;
     border-right: none;
-    border-bottom: 1px solid #333;
   }
-
-  .right-sidebar .sidebar-panel {
-    height: 100%;
-    padding: 10px 12px 6px;
-  }
-
-  .right-sidebar .clear-panel {
-    margin-top: 0;
-    border-top: none;
-    padding: 6px 12px;
-  }
-}
-
-.time-slide-inputs{
-  display: flex;
-  gap: 6px;
-  margin-left: 6px;
-}
-.bible-version-select {
-  width: 80%;
-  padding: 8px;
-  border-radius: 8px;
-  border: none;
-  background: #444;
-  color: white;
-  font-size: 13px;
-}
-/* Bible selector group for spacing */
-.bible-selector-group > * {
-  margin-bottom: 10px;
-}
-.bible-selector-group > *:last-child {
-  margin-bottom: 0;
-}
-.bible-selector-margin {
-  margin-left: 4px;
-  margin-right: 4px;
-  margin-top: 2px;
-  margin-bottom: 6px;
-}
-/* Uniform number button sizing for chapters/verses and grid layout */
-.bible-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  max-width: 340px;
-}
-.chapter-btn,
-.verse-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: 8px;
-  border: none;
-  background: #444;
-  color: white;
-  cursor: pointer;
-  font-size: 15px;
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.15s;
-}
-.chapter-btn.active,
-.verse-btn.active {
-  background: #777;
-}
-.clear-panel {
-  height: auto;
-  margin: 8px;
+  .sidebar-panel { padding: 8px 10px; gap: 8px; }
+  .clear-panel { margin-top: 0; border-top: none; }
 }
 </style>

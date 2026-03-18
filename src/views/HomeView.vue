@@ -160,16 +160,14 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* ---- Layout ---- */
+/* ── Layout ── */
 .home-layout {
   min-height: 100%;
-  color: #fff;
-  font-family: Arial, sans-serif;
+  color: var(--text-primary);
   overflow-y: auto;
   position: relative;
-  /* Image anchored bottom-left */
   background: url('/Bible.jpg') no-repeat left bottom / cover;
-  background-color: #181818;
+  background-color: var(--bg-base);
 }
 
 /* Gradient: transparent bottom-left → dark top-right */
@@ -188,104 +186,63 @@ onUnmounted(() => {
   z-index: 0;
 }
 
-/* All content sits above the overlay */
 .main-content {
   position: relative;
   z-index: 1;
   padding: 2.5em 2.5em 3em;
 }
+
 .home-top {
   display: flex;
   gap: 2.5em;
   align-items: flex-start;
 }
 
-/* ---- Left column: title + meetings ---- */
-.home-left {
-  flex: 0 0 260px;
-  min-width: 200px;
-}
-h1 {
-  font-size: 2em;
-  font-weight: 700;
-  margin: 0 0 0.3em;
-  color: #fff;
-}
-.welcome-msg {
-  font-size: 1.05em;
-  color: #b3b3b3;
-  margin: 0 0 1.4em;
-}
+/* ── Left column ── */
+.home-left { flex: 0 0 260px; min-width: 200px; }
+
+h1 { font-size: 2em; font-weight: 700; margin: 0 0 0.3em; color: #fff; }
+.welcome-msg { font-size: 1.05em; color: var(--text-muted); margin: 0 0 1.4em; }
+
 .meetings-card {
   background: rgba(30, 30, 30, 0.85);
   backdrop-filter: blur(6px);
-  border-radius: 14px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.35);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border);
   padding: 1.2em 1.2em 0.6em;
 }
-.meetings-card h2 {
-  font-size: 1.1em;
-  font-weight: 700;
-  margin: 0 0 0.9em;
-  color: #fff;
-}
-.meetings-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
+.meetings-card h2 { font-size: 1.1em; font-weight: 700; margin: 0 0 0.9em; color: #fff; }
+
+.meetings-list { list-style: none; padding: 0; margin: 0; }
 .meeting-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0.6em 0;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid var(--border);
 }
-.meeting-row:last-child {
-  border-bottom: none;
-}
-.meeting-name {
-  font-size: 0.95em;
-  font-weight: 500;
-}
+.meeting-row:last-child { border-bottom: none; }
+.meeting-name { font-size: 0.95em; font-weight: 500; }
+
 .join-btn {
-  background: var(--accent-color, #4fc3f7);
-  color: #181818;
+  background: var(--accent);
+  color: #fff;
   border: none;
   border-radius: 20px;
   padding: 0.3em 1em;
   font-weight: 700;
   font-size: 0.85em;
   cursor: pointer;
-  transition: opacity 0.15s;
+  transition: background var(--transition);
 }
-.join-btn:hover {
-  opacity: 0.85;
-}
-.no-meetings {
-  color: #666;
-  font-style: italic;
-  font-size: 0.9em;
-  padding: 0.5em 0 0.8em;
-}
+.join-btn:hover { background: var(--accent-hover); }
+.no-meetings { color: var(--text-faint); font-style: italic; font-size: 0.9em; padding: 0.5em 0 0.8em; }
 
-/* ---- Right column: how it works ---- */
-.home-right {
-  flex: 1;
-  min-width: 0;
-}
-.how-title {
-  font-size: 1.3em;
-  font-weight: 700;
-  margin: 0 0 0.4em;
-  color: #fff;
-}
-.how-intro {
-  color: #b3b3b3;
-  font-size: 0.95em;
-  margin: 0 0 1.2em;
-  line-height: 1.6;
-}
+/* ── Right column ── */
+.home-right { flex: 1; min-width: 0; }
+.how-title { font-size: 1.3em; font-weight: 700; margin: 0 0 0.4em; color: #fff; }
+.how-intro { color: var(--text-muted); font-size: 0.95em; margin: 0 0 1.2em; line-height: 1.6; }
+
 .role-cards {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -294,74 +251,44 @@ h1 {
 .role-card {
   background: rgba(30, 30, 30, 0.80);
   backdrop-filter: blur(6px);
-  border-radius: 14px;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border);
   padding: 1.2em 1em 1em;
   display: flex;
   flex-direction: column;
   gap: 0.4em;
 }
-.role-icon {
-  font-size: 1.8em;
-  color: var(--accent-color, #4fc3f7);
-}
-.role-card h3 {
-  font-size: 0.95em;
-  font-weight: 700;
-  margin: 0;
-  color: #fff;
-}
-.role-card p {
-  font-size: 0.85em;
-  color: #b3b3b3;
-  margin: 0;
-  line-height: 1.55;
-}
+.role-icon { font-size: 1.8em; color: var(--accent); }
+.role-card h3 { font-size: 0.95em; font-weight: 700; margin: 0; color: #fff; }
+.role-card p { font-size: 0.85em; color: var(--text-muted); margin: 0; line-height: 1.55; }
 
-/* ---- Dialogs ---- */
+/* ── Dialogs ── */
 dialog {
-  background: #232323;
-  color: #fff;
-  border-radius: 14px;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border);
   padding: 2em;
-  border: none;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5);
 }
 select {
   padding: 8px;
-  border-radius: 8px;
-  border: none;
-  background: #444;
-  color: white;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text-primary);
   font-size: 15px;
   width: 250px;
 }
-option { background: #444; color: white; }
+select option { background: var(--bg-surface); }
 
-/* ---- Responsive ---- */
-@media (max-width: 1100px) {
-  .role-cards {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
+/* ── Responsive ── */
+@media (max-width: 1100px) { .role-cards { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 700px) {
-  .home-top {
-    flex-direction: column;
-    gap: 1.5em;
-  }
-  .home-left {
-    flex: none;
-    width: 100%;
-  }
-  .role-cards {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .main-content {
-    padding: 1.2em 1em 2em;
-  }
+  .home-top { flex-direction: column; gap: 1.5em; }
+  .home-left { flex: none; width: 100%; }
+  .role-cards { grid-template-columns: repeat(2, 1fr); }
+  .main-content { padding: 1.2em 1em 2em; }
 }
-@media (max-width: 480px) {
-  .role-cards {
-    grid-template-columns: 1fr;
-  }
-}
+@media (max-width: 440px) { .role-cards { grid-template-columns: 1fr; } }
 </style>
