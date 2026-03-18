@@ -1,5 +1,8 @@
 <template>
   <div class="viewer">
+    <button class="home-btn" @click="goHome" title="Home">
+      <span class="icon material-icons">home</span>
+    </button>
     <div v-if="!displayText" class="waiting-message">
       Waiting for the meeting to start
     </div>
@@ -19,6 +22,7 @@
 </template>
 
 <script setup>
+const goHome = () => router.push('/')
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { createFitText } from '../composables/useFitText.js'

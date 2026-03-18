@@ -4,7 +4,7 @@
       <div ref="textInputRef" class="text-display"></div>
     </div>
     <div class="right-sidebar">
-      <div class="sidebar-icons">
+      <div class="sidebar-icons sidebar-top">
         <button :class="{active: openPanel==='main'}" @click="togglePanel('main')" title="Main Tools">
           <span class="icon material-icons">dashboard_customize</span>
         </button>
