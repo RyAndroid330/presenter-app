@@ -1,13 +1,12 @@
-
 <template>
   <div>
     <header class="app-header">
       <nav class="main-nav">
-        <button @click="router.push('/')" class="nav-btn">Home</button>
-        <button @click="restrictedNav('/presenter')" class="nav-btn">Slides</button>
-        <button @click="restrictedNav('/teacher')" class="nav-btn">Teacher</button>
-        <button @click="restrictedNav('/musician')" class="nav-btn">Musician</button>
-        <button @click="openViewerDialog" class="nav-btn">Viewer</button>
+        <button @click="router.push('/')" class="nav-btn" :class="{ active: route.path === '/' }">Home</button>
+        <button @click="restrictedNav('/presenter')" class="nav-btn" :class="{ active: route.path === '/presenter' }">Slides</button>
+        <button @click="restrictedNav('/teacher')" class="nav-btn" :class="{ active: route.path === '/teacher' }">Teacher</button>
+        <button @click="restrictedNav('/musician')" class="nav-btn" :class="{ active: route.path === '/musician' }">Musician</button>
+        <button @click="openViewerDialog" class="nav-btn" :class="{ active: route.path === '/viewer' }">Viewer</button>
       </nav>
       <div class="user-info">
         <template v-if="user">
@@ -112,15 +111,41 @@ html, body, #app {
 .nav-btn {
   background: none;
   border: none;
-  color: #fff;
+  color: #aaa;
   font-size: 1em;
   padding: 6px 14px;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background 0.15s, color 0.15s;
+  font-weight: 500;
+  position: relative;
+}
+.nav-btn::after {
+  content: '';
+  display: block;
+  position: absolute;
+  bottom: -2px;
+  left: 14px;
+  right: 14px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent-color, #4fc3f7);
+  transform: scaleX(0);
+  transition: transform 0.15s;
 }
 .nav-btn:hover {
-  background: #444;
+  background: rgba(79, 195, 247, 0.08);
+  color: var(--accent-color, #4fc3f7);
+}
+.nav-btn:hover::after {
+  transform: scaleX(1);
+}
+.nav-btn.active {
+  color: var(--accent-color, #4fc3f7);
+  background: rgba(79, 195, 247, 0.12);
+}
+.nav-btn.active::after {
+  transform: scaleX(1);
 }
 .user-info {
   display: flex;

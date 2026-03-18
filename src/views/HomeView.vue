@@ -1,60 +1,53 @@
 <template>
-  <!-- Mac Dark Mode meets Spotify styling -->
   <div class="home-layout">
-    <!-- Sidebar removed, navigation is now in the top navbar. -->
     <main class="main-content">
-      <h1>Welcome to StudyLink</h1>
-      <p class="welcome-msg">Your meeting, on every screen.</p>
-      <div class="meetings-card">
-        <h2>Active Meetings</h2>
-        <ul class="meetings-list">
-          <li v-for="m in meetings" :key="m.id" class="meeting-row">
-            <span class="meeting-name">{{ m.name }}</span>
-            <button class="join-btn" @click="joinMeetingDirect(m.name)">Join</button>
-          </li>
-          <li v-if="!meetings.length" class="no-meetings">No active meetings.</li>
-        </ul>
-      </div>
+      <div class="home-top">
 
-      <div class="how-it-works">
-        <h2>How it works</h2>
-        <p class="how-intro">
-          StudyLink is built for small church gatherings — a home group, an extra room, anywhere
-          you don't have a projector. Everyone uses their own device and the meeting comes to them.
-        </p>
-
-        <div class="role-cards">
-          <div class="role-card">
-            <span class="role-icon material-icons">menu_book</span>
-            <h3>Teacher</h3>
-            <p>Prepare a lesson as a series of text slides. Share it to the meeting when you're ready and the presenter can step through each slide during the teaching.</p>
-          </div>
-
-          <div class="role-card">
-            <span class="role-icon material-icons">music_note</span>
-            <h3>Worship Leader</h3>
-            <p>Build a worship session by adding songs in order. Share it to the meeting so the presenter can display each verse and chorus as the congregation sings along.</p>
-          </div>
-
-          <div class="role-card">
-            <span class="role-icon material-icons">dashboard_customize</span>
-            <h3>Presenter</h3>
-            <p>Run the slides live during the meeting. Load a worship session or lesson and tap each section to display it. On the fly you can also:</p>
-            <ul class="role-list">
-              <li><span class="material-icons list-icon">timer</span> Set a countdown — <em>"Meeting starts in 5:00"</em> or <em>"Break ends in 2:30"</em></li>
-              <li><span class="material-icons list-icon">menu_book</span> Look up and display any Bible verse</li>
-              <li><span class="material-icons list-icon">music_note</span> Find and present any song from the library</li>
-              <li><span class="material-icons list-icon">add_circle</span> Type a custom text slide for anything unplanned</li>
+        <div class="home-left">
+          <h1>Welcome to StudyLink</h1>
+          <p class="welcome-msg">Your meeting, on every screen.</p>
+          <div class="meetings-card">
+            <h2>Active Meetings</h2>
+            <ul class="meetings-list">
+              <li v-for="m in meetings" :key="m.id" class="meeting-row">
+                <span class="meeting-name">{{ m.name }}</span>
+                <button class="join-btn" @click="joinMeetingDirect(m.name)">Join</button>
+              </li>
+              <li v-if="!meetings.length" class="no-meetings">No active meetings.</li>
             </ul>
           </div>
+        </div>
 
-          <div class="role-card">
-            <span class="role-icon material-icons">tv</span>
-            <h3>Everyone else</h3>
-            <p>Join the meeting as a viewer. Whatever the presenter displays appears on your screen in real time — lyrics, scripture, announcements, timers. No app to install, just open the link.</p>
-            <p class="role-note"><span class="material-icons list-icon">piano</span> <strong>Musicians:</strong> tap the music button in the viewer to see the full chord chart for the current song.</p>
+        <div class="home-right">
+          <h2 class="how-title">How it works</h2>
+          <p class="how-intro">
+            Built for small gatherings — a home group, an extra room, anywhere without a projector.
+            Everyone follows along on their own device.
+          </p>
+          <div class="role-cards">
+            <div class="role-card">
+              <span class="role-icon material-icons">menu_book</span>
+              <h3>Teacher</h3>
+              <p>Prepare a lesson as text slides and share it to the meeting for the presenter to step through during teaching.</p>
+            </div>
+            <div class="role-card">
+              <span class="role-icon material-icons">music_note</span>
+              <h3>Worship Leader</h3>
+              <p>Build a worship session with songs in order. The presenter displays each verse and chorus as the congregation sings.</p>
+            </div>
+            <div class="role-card">
+              <span class="role-icon material-icons">dashboard_customize</span>
+              <h3>Presenter</h3>
+              <p>Run slides live during the meeting. Load a session or lesson and tap to display each section. On the fly you can also set a countdown timer, look up a Bible verse, find a song, or type a custom slide.</p>
+            </div>
+            <div class="role-card">
+              <span class="role-icon material-icons">tv</span>
+              <h3>Viewer</h3>
+              <p>Join and follow along in real time — lyrics, scripture, timers, announcements. No app needed. Musicians can tap the music button to see the full chord chart for the current song.</p>
+            </div>
           </div>
         </div>
+
       </div>
     </main>
 
@@ -167,72 +160,50 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* ---- Layout ---- */
 .home-layout {
-  display: flex;
-  min-height: 90vh;
+  min-height: calc(100vh - 50px);
   background: #181818;
-}
-.sidebar {
-  width: 75px;
-  background: #232323;
   color: #fff;
-  transition: width 0.2s;
-  box-shadow: 2px 0 8px rgba(0,0,0,0.15);
-  padding-top: 2em;
-}
-.sidebar.expanded {
-  width: 200px;
-}
-.sidebar-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 1em;
-  height: 100%;
-  justify-content: center;
-}
-.sidebar button {
-  display: flex;
-  align-items: center;
-  background: none;
-  border: none;
-  color: inherit;
-  font-size: 1.1em;
-  padding: 0.7em 1em;
-  border-radius: 16px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.sidebar button:hover {
-  background: var(--accent-color);
-  color: var(--accent-color-hover);
-}
-.icon {
-  margin-right: 0.7em;
-  font-size: 1.5em;
-}
-.label {
-  font-weight: 500;
+  font-family: Arial, sans-serif;
+  overflow-y: auto;
 }
 .main-content {
-  flex: 1;
-  padding: 2em 3em;
+  padding: 2.5em 2.5em 3em;
+}
+.home-top {
+  display: flex;
+  gap: 2.5em;
+  align-items: flex-start;
+}
+
+/* ---- Left column: title + meetings ---- */
+.home-left {
+  flex: 0 0 260px;
+  min-width: 200px;
 }
 h1 {
-  font-size: 2.2em;
+  font-size: 2em;
   font-weight: 700;
-  margin-bottom: 0.5em;
+  margin: 0 0 0.3em;
+  color: #fff;
 }
 .welcome-msg {
-  font-size: 1.2em;
+  font-size: 1.05em;
   color: #b3b3b3;
-  margin-bottom: 2em;
+  margin: 0 0 1.4em;
 }
 .meetings-card {
   background: #232323;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  padding: 1.5em;
-  margin-top: 1em;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  padding: 1.2em 1.2em 0.6em;
+}
+.meetings-card h2 {
+  font-size: 1.1em;
+  font-weight: 700;
+  margin: 0 0 0.9em;
+  color: #fff;
 }
 .meetings-list {
   list-style: none;
@@ -243,320 +214,92 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.7em 0;
+  padding: 0.6em 0;
   border-bottom: 1px solid #333;
-
-  @media (max-width: 900px) {
-    .main-content {
-      padding: 1.2em 0.7em;
-    }
-    .meetings-card {
-      padding: 1em;
-    }
-  }
-
-  @media (max-width: 600px) {
-    .home-layout {
-      flex-direction: column;
-    }
-    .sidebar {
-      width: 100vw;
-      min-width: 0;
-      flex-direction: row;
-      padding-top: 0.5em;
-      box-shadow: none;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-    .sidebar.expanded {
-      width: 100vw;
-    }
-    .sidebar-buttons {
-      flex-direction: row;
-      gap: 0.5em;
-      justify-content: space-around;
-    }
-    .sidebar button {
-      font-size: 1em;
-      padding: 0.5em 0.7em;
-      border-radius: 10px;
-    }
-    .icon {
-      margin-right: 0.3em;
-      font-size: 1.2em;
-    }
-    .main-content {
-      padding: 1em 0.3em;
-    }
-    h1 {
-      font-size: 1.3em;
-    }
-    .meetings-card {
-      border-radius: 8px;
-      padding: 0.7em;
-    }
-    .meeting-row {
-      font-size: 0.98em;
-      padding: 0.5em 0;
-    }
-  }
+}
+.meeting-row:last-child {
+  border-bottom: none;
 }
 .meeting-name {
+  font-size: 0.95em;
   font-weight: 500;
 }
 .join-btn {
-  background: var(--accent-color);
-  color: #fff;
+  background: var(--accent-color, #4fc3f7);
+  color: #181818;
   border: none;
-  border-radius: 24px;
-  padding: 0.4em 1.2em;
-  font-weight: 600;
+  border-radius: 20px;
+  padding: 0.3em 1em;
+  font-weight: 700;
+  font-size: 0.85em;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: opacity 0.15s;
 }
 .join-btn:hover {
-  background: var(--accent-color-hover);
+  opacity: 0.85;
 }
 .no-meetings {
-  color: #b3b3b3;
-  text-align: center;
-  padding: 1em 0;
+  color: #666;
+  font-style: italic;
+  font-size: 0.9em;
+  padding: 0.5em 0 0.8em;
 }
 
-/* ---- How it works ---- */
-.how-it-works {
-  margin-top: 2.5em;
-  max-width: 960px;
-  padding-bottom: 3em;
+/* ---- Right column: how it works ---- */
+.home-right {
+  flex: 1;
+  min-width: 0;
 }
-.how-it-works h2 {
-  font-size: 1.5em;
+.how-title {
+  font-size: 1.3em;
   font-weight: 700;
-  margin-bottom: 0.5em;
+  margin: 0 0 0.4em;
   color: #fff;
 }
 .how-intro {
   color: #b3b3b3;
-  font-size: 1.05em;
-  margin-bottom: 1.8em;
-  max-width: 680px;
+  font-size: 0.95em;
+  margin: 0 0 1.2em;
   line-height: 1.6;
 }
 .role-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 1em;
 }
 .role-card {
   background: #232323;
   border-radius: 14px;
-  padding: 1.4em 1.2em 1.2em;
+  padding: 1.2em 1em 1em;
   display: flex;
   flex-direction: column;
-  gap: 0.5em;
+  gap: 0.4em;
 }
 .role-icon {
-  font-size: 2em;
+  font-size: 1.8em;
   color: var(--accent-color, #4fc3f7);
-  margin-bottom: 0.1em;
 }
 .role-card h3 {
-  font-size: 1.05em;
+  font-size: 0.95em;
   font-weight: 700;
   margin: 0;
   color: #fff;
 }
 .role-card p {
-  font-size: 0.92em;
+  font-size: 0.85em;
   color: #b3b3b3;
   margin: 0;
   line-height: 1.55;
 }
-.role-list {
-  list-style: none;
-  padding: 0;
-  margin: 0.3em 0 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.45em;
-}
-.role-list li {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.4em;
-  font-size: 0.88em;
-  color: #b3b3b3;
-  line-height: 1.4;
-}
-.list-icon {
-  font-size: 1em !important;
-  color: var(--accent-color, #4fc3f7);
-  flex-shrink: 0;
-  margin-top: 1px;
-}
-.role-note {
-  margin-top: 0.6em !important;
-  display: flex;
-  align-items: flex-start;
-  gap: 0.4em;
-  font-size: 0.88em !important;
-}
 
+/* ---- Dialogs ---- */
 dialog {
   background: #232323;
   color: #fff;
-  border-radius: 16px;
+  border-radius: 14px;
   padding: 2em;
   border: none;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-select, button {
-  font-size: 1em;
-}
-</style>
-
-// ...existing code...
-<style scoped>
-.home-layout {
-  display: flex;
-  height: 100vh;
-  background: #2f2f2f;
-  color: white;
-  font-family: Arial, sans-serif;
-}
-
-.sidebar {
-  width: 56px;
-  background: #232323;
-  transition: width 0.2s cubic-bezier(.4,0,.2,1);
-  overflow: hidden;
-  position: relative;
-  z-index: 2;
-  box-shadow: 2px 0 8px rgba(0,0,0,0.08);
-}
-.sidebar.expanded {
-  width: 180px;
-}
-.sidebar-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 16px 0;
-  align-items: stretch;
-}
-.sidebar button {
-  background: none;
-  border: none;
-  color: white;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 18px;
-  padding: 10px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.15s;
-  width: 100%;
-}
-.sidebar button:hover {
-  background: #444;
-}
-
-.icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  color: #ccc;
-  font-size: 26px;
-  line-height: 1;
-}
-.join-btn {
-  margin-left: 16px;
-  padding: 6px 18px;
-  border-radius: 8px;
-  border: none;
-  background: #444;
-  color: #fff;
-  font-size: 15px;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-.join-btn:hover {
-  background: #666;
-}
-.meeting-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.label {
-  opacity: 0;
-  transition: opacity 0.2s;
-  white-space: nowrap;
-}
-.sidebar.expanded .label {
-  opacity: 1;
-}
-
-.main-content {
-  flex: 1;
-  padding: 48px 32px 0 32px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.meetings-card {
-  width: 25%;
-  min-width: 220px;
-  max-width: 400px;
-  background: #232323;
-  border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.10);
-  padding: 24px 20px 16px 20px;
-  margin-top: 24px;
-  margin-bottom: 32px;
-}
-.meetings-card h2 {
-  margin-top: 0;
-  margin-bottom: 18px;
-  font-size: 22px;
-  color: #fff;
-}
-.welcome-msg {
-  margin-top: 0;
-  margin-bottom: 32px;
-  font-size: 18px;
-  color: #ccc;
-}
-.meetings-list {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 24px 0;
-  width: 100%;
-}
-.meetings-list li {
-  padding: 10px 0;
-  border-bottom: 1px solid #333;
-  font-size: 18px;
-}
-.meeting-name {
-  font-weight: bold;
-}
-.no-meetings {
-  color: #888;
-  font-style: italic;
-}
-
-dialog {
-  background: #2f2f2f;
-  border: 1px solid #555;
-  border-radius: 12px;
-  padding: 30px;
-  color: white;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4);
 }
 select {
   padding: 8px;
@@ -564,20 +307,36 @@ select {
   border: none;
   background: #444;
   color: white;
-  font-size: 16px;
+  font-size: 15px;
   width: 250px;
 }
-option {
-  background: #444;
-  color: white;
+option { background: #444; color: white; }
+
+/* ---- Responsive ---- */
+@media (max-width: 1100px) {
+  .role-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 @media (max-width: 700px) {
-  .main-content {
-    padding: 24px 6vw 0 6vw;
+  .home-top {
+    flex-direction: column;
+    gap: 1.5em;
   }
-  .sidebar.expanded {
-    width: 90vw;
-    min-width: 120px;
+  .home-left {
+    flex: none;
+    width: 100%;
+  }
+  .role-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .main-content {
+    padding: 1.2em 1em 2em;
+  }
+}
+@media (max-width: 480px) {
+  .role-cards {
+    grid-template-columns: 1fr;
   }
 }
 </style>
