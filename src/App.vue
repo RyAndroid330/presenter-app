@@ -2,6 +2,13 @@
 <template>
   <div>
     <header class="app-header">
+      <nav class="main-nav">
+        <button @click="router.push('/')" class="nav-btn">Home</button>
+        <button @click="restrictedNav('/presenter')" class="nav-btn">Slides</button>
+        <button @click="restrictedNav('/teacher')" class="nav-btn">Teacher</button>
+        <button @click="restrictedNav('/musician')" class="nav-btn">Musician</button>
+        <button @click="openViewerDialog" class="nav-btn">Viewer</button>
+      </nav>
       <div class="user-info">
         <template v-if="user">
           <img v-if="user.picture || user.photos" :src="user.picture || (user.photos && user.photos[0] && user.photos[0].value)" class="user-avatar" />
@@ -29,6 +36,19 @@
 </template>
 
 <script setup>
+// Navigation logic for navbar
+function restrictedNav(path) {
+  if (!user.value) {
+    // Show login dialog if not logged in
+    window.location.href = '/auth/google'
+    return
+  }
+  router.push(path)
+}
+
+function openViewerDialog() {
+  router.push('/viewer')
+}
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 const user = ref(null)
@@ -81,9 +101,26 @@ html, body, #app {
   color: #fff;
   padding: 8px 20px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   box-sizing: border-box;
+}
+.main-nav {
+  display: flex;
+  gap: 16px;
+}
+.nav-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1em;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.nav-btn:hover {
+  background: #444;
 }
 .user-info {
   display: flex;

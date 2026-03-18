@@ -1,26 +1,7 @@
 <template>
   <!-- Mac Dark Mode meets Spotify styling -->
   <div class="home-layout">
-    <aside class="sidebar" :class="{ expanded: sidebarHover }" @mouseenter="sidebarHover = true" @mouseleave="sidebarHover = false">
-      <div class="sidebar-buttons sidebar-top">
-        <button @click="restrictedNav('/presenter')">
-          <span class="icon material-icons">slideshow</span>
-          <span class="label">Slides</span>
-        </button>
-        <button @click="restrictedNav('/teacher')">
-          <span class="icon material-icons">school</span>
-          <span class="label">Teacher</span>
-        </button>
-        <button @click="restrictedNav('/musician')">
-          <span class="icon material-icons">piano</span>
-          <span class="label">Musician</span>
-        </button>
-        <button @click="openViewerDialog">
-          <span class="icon material-icons">visibility</span>
-          <span class="label">Viewer</span>
-        </button>
-      </div>
-    </aside>
+    <!-- Sidebar removed, navigation is now in the top navbar. -->
     <main class="main-content">
       <h1>Welcome to StudyLink</h1>
       <p class="welcome-msg">Your meeting, on every screen.</p>
