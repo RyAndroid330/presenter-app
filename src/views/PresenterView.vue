@@ -89,6 +89,9 @@
                     <span class="ss-preview">{{ sec.text.substring(0, 40) || '(empty)' }}{{ sec.text.length > 40 ? '…' : '' }}</span>
                   </div>
                 </div>
+                <div v-if="expandedSongId === song.song_id && !expandedSections.length" class="ss-sections">
+                  <div class="ss-section" style="color:#888;font-style:italic;">No sections found</div>
+                </div>
               </div>
             </div>
           </div>
@@ -754,52 +757,75 @@ async function onSessionChange() {
   try {
     const res = await fetch('/api/setlists/' + selectedSessionId.value)
     const s = await res.json()
-    // Enrich sessionSongs with XML/DB metadata if available
-    sessionSongs.value = (s.songs || []).map(song => {
-      let enriched = { ...song };
-      // Try DB song first
-      let dbSong = null;
-      if (Array.isArray(allSongs?.value)) {
-        dbSong = allSongs.value.find(x => x.id === song.song_id || x.filename === song.song_id);
-      }
-      if (dbSong) {
-        enriched.language = dbSong.language || enriched.language;
-        enriched.filename = dbSong.filename || enriched.filename;
-      }
-      // Try XML song if DB not found or missing info
-      let xmlSong = null;
-      if (Array.isArray(xmlSongs?.value)) {
-        xmlSong = xmlSongs.value.find(x => x.id === song.song_id || x.filename === song.song_id);
-      }
-      if (xmlSong) {
-        enriched.language = xmlSong.language || enriched.language;
-        enriched.filename = xmlSong.filename || enriched.filename;
-      }
-      return enriched;
-    });
+
+    // For each song in the setlist, fetch its full DB record so we always have
+    // language + filename available — regardless of whether the Songs panel has
+    // been opened / allSongs loaded yet.
+    sessionSongs.value = await Promise.all(
+      (s.songs || []).map(async (song) => {
+        let enriched = { ...song }
+
+        // 1. Check in-memory allSongs (already loaded if Songs panel was opened)
+        if (Array.isArray(allSongs.value) && allSongs.value.length) {
+          const dbSong = allSongs.value.find(x => x.id === song.song_id || x.filename === song.song_id)
+          if (dbSong) {
+            enriched.language = dbSong.language || enriched.language
+            enriched.filename = dbSong.filename || enriched.filename
+          }
+        }
+
+        // 2. Check in-memory xmlSongs
+        if (Array.isArray(xmlSongs.value) && xmlSongs.value.length) {
+          const xmlSong = xmlSongs.value.find(x => x.id === song.song_id || x.filename === song.song_id)
+          if (xmlSong) {
+            enriched.language = xmlSong.language || enriched.language
+            enriched.filename = xmlSong.filename || enriched.filename
+          }
+        }
+
+        // 3. FIX: If we still don't have language/filename, fetch directly from DB API
+        if (!enriched.language || !enriched.filename) {
+          try {
+            const songRes = await fetch('/api/songs/' + song.song_id)
+            if (songRes.ok && (songRes.headers.get('content-type') || '').includes('application/json')) {
+              const dbSong = await songRes.json()
+              if (dbSong) {
+                enriched.language = dbSong.language || enriched.language
+                enriched.filename = dbSong.filename || enriched.filename
+              }
+            }
+          } catch {}
+        }
+
+        return enriched
+      })
+    )
   } catch (e) { console.error(e) }
 }
 
 async function toggleExpandSong(songId) {
+  // Collapse if already expanded
   if (expandedSongId.value === songId) {
     expandedSongId.value = null
     expandedSections.value = []
     return
   }
+
   try {
     console.log('[toggleExpandSong] songId:', songId)
-    let song = null;
-    // Try DB song first
+    let song = null
+
+    // 1. Try DB song directly
     try {
       const res = await fetch('/api/songs/' + songId)
       if (res.ok && (res.headers.get('content-type') || '').includes('application/json')) {
         song = await res.json()
       }
     } catch {}
-    // If not found, try XML song fallback (same as quick song tool)
+
+    // 2. Try in-memory xmlSongs / allSongs lookup → XML library fetch
     if (!song) {
-      // Try to find the XML song object from xmlSongs (like quick song tool)
-      let xml = null;
+      let xml = null
       if (Array.isArray(xmlSongs?.value)) {
         xml = xmlSongs.value.find(x => x.id == songId || x.filename == songId)
       }
@@ -815,20 +841,35 @@ async function toggleExpandSong(songId) {
         } catch {}
       }
     }
-    if (song && song.sections) {
+
+    // 3. FIX: Fall back to language/filename stored on the sessionSong entry
+    //    This works even when allSongs/xmlSongs haven't been loaded yet.
+    if (!song) {
+      const sessionSong = sessionSongs.value.find(s => s.song_id == songId)
+      if (sessionSong && sessionSong.language && sessionSong.filename) {
+        try {
+          const res = await fetch(`/api/song-library/${sessionSong.language}/${sessionSong.filename}`)
+          if (res.ok && (res.headers.get('content-type') || '').includes('application/json')) {
+            song = await res.json()
+          }
+        } catch {}
+      }
+    }
+
+    if (song && song.sections && song.sections.length) {
       expandedSongId.value = songId
-      expandedSections.value = (song.sections || []).map(s => ({
+      expandedSections.value = song.sections.map(s => ({
         ...s,
         chords: s.chords ? (typeof s.chords === 'string' ? JSON.parse(s.chords) : s.chords) : {}
       }))
     } else {
       console.warn('[toggleExpandSong] No sections found for song:', songId, song)
+      // Still expand the row so the "No sections found" message shows
       expandedSongId.value = songId
       expandedSections.value = []
     }
   } catch (e) {
     console.error('[toggleExpandSong] Error:', e)
-    alert('Could not load song data. (Network or parsing error)')
     expandedSongId.value = songId
     expandedSections.value = []
   }
