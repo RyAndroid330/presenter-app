@@ -249,7 +249,8 @@ onUnmounted(() => {
 }
 
 .viewer {
-  height: 100vh;
+  height: 100%;
+  width: 100%;
   margin: 0;
   background: #2f2f2f;
   font-family: Arial, sans-serif;

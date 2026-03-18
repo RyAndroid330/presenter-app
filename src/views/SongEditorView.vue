@@ -48,9 +48,11 @@
     </div>
 
     <div class="sidebar">
-      <button class="back-btn" @click="goBack">&#x2190; Back</button>
-      <button class="save-back-btn" @click="saveAndBack">&#x2714; Save &amp; Back</button>
-
+      <div class="sidebar-top-row">
+        <button class="back-btn" @click="goBack">&#x2190; Back</button>
+        <button class="save-back-btn" @click="saveAndBack">&#x2714; Save &amp; Back</button>
+      </div>
+      <div class="sidebar-scroll">
       <label class="field-label">Song Title</label>
       <div class="song-title-row">
         <input v-model="songTitle" @change="updateTitle" class="title-input" placeholder="Song title" />
@@ -102,6 +104,7 @@
           </div>
         </div>
       </div>
+      </div><!-- end sidebar-scroll -->
     </div>
   </div>
 </template>
@@ -446,36 +449,62 @@ onMounted(() => {
 
 .editor-layout {
   display: flex;
-  height: 100dvh;
-  width: 100dvw;
+  height: 100%;
+  width: 100%;
   overflow: hidden;
   background-color: #2f2f2f;
   font-family: Arial, sans-serif;
   color: white;
-  margin: 0;
-  padding: 0;
 }
 
 .main-area {
-  width: 80dvw;
-  height: 100dvh;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 20px;
-  box-sizing: border-box;
+  padding: 16px;
   overflow: hidden;
 }
 
 .sidebar {
-  width: 20dvw;
-  height: 100dvh;
-  padding: 15px;
-  border-left: 1px solid #444;
+  width: 280px;
+  min-width: 200px;
+  flex-shrink: 0;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
+  border-left: 1px solid #444;
+  overflow: hidden;
+}
+
+/* Sticky top-row inside sidebar */
+.sidebar > .sidebar-top-row {
+  flex-shrink: 0;
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #444;
+}
+
+/* Scrollable sidebar content */
+.sidebar-scroll {
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
-  gap: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Always-visible save bar in main-area */
+.lyrics-bar {
+  flex-shrink: 0;
+  display: flex;
+  gap: 8px;
+  padding-top: 10px;
+  align-items: flex-end;
 }
 
 .back-btn {
@@ -613,52 +642,26 @@ onMounted(() => {
 .move-btn:hover:not(:disabled) { color: #ccc; background: rgba(255,255,255,0.1); }
 .move-btn:disabled { opacity: 0.3; cursor: default; }
 
-@media (max-width: 900px) {
-  .editor-layout {
-    flex-direction: column;
-    padding: 10px 2px;
+/* Mobile layout */
+@media (max-width: 768px) and (orientation: portrait), (max-width: 500px) {
+  .editor-layout { flex-direction: column; }
+  .main-area {
+    height: 42%;
+    flex: none;
+    flex-shrink: 0;
+    padding: 8px;
+    overflow: hidden;
   }
   .sidebar {
     width: 100%;
     min-width: 0;
-    border-radius: 0 0 12px 12px;
-    margin-bottom: 12px;
+    height: 58%;
+    flex-shrink: 0;
+    border-left: none;
+    border-top: 1px solid #444;
   }
-  .main-area {
-    width: 100%;
-    min-width: 0;
-    padding: 0 2px;
-  }
-}
-
-@media (max-width: 600px) {
-  .editor-layout {
-    flex-direction: column;
-    padding: 4px 0;
-  }
-  .sidebar {
-    width: 100vw;
-    min-width: 0;
-    border-radius: 0 0 8px 8px;
-    margin-bottom: 8px;
-    padding: 8px 2px;
-  }
-  .main-area {
-    width: 100vw;
-    min-width: 0;
-    padding: 0 2px;
-  }
-  .lyrics-bar textarea {
-    font-size: 1em;
-    min-width: 0;
-    width: 98vw;
-    max-width: 100vw;
-  }
-  .pk-box {
-    width: 98vw;
-    min-width: 0;
-    padding: 8px 2px;
-  }
+  .lyrics-bar textarea { font-size: 1em; width: 100%; }
+  .pk-box { width: 98vw; min-width: 0; padding: 8px 4px; }
 }
 
 .type-selector { display: flex; gap: 4px; flex-wrap: wrap; }

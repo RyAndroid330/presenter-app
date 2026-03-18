@@ -162,7 +162,7 @@ onUnmounted(() => {
 <style scoped>
 /* ---- Layout ---- */
 .home-layout {
-  min-height: calc(100vh - 50px);
+  min-height: 100%;
   background: #181818;
   color: #fff;
   font-family: Arial, sans-serif;

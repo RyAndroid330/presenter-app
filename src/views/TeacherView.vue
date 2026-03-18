@@ -1,9 +1,6 @@
 <template>
   <div class="teacher">
-    <div class="header">
-      <button class="back-btn" @click="$router.push('/')">&#x2190; Home</button>
-      <h1>Lessons</h1>
-    </div>
+    <h1>Lessons</h1>
 
     <button class="new-btn" @click="createLesson">+ New Lesson</button>
 
@@ -103,7 +100,8 @@ onMounted(loadLessons)
 
 <style scoped>
 .teacher {
-  min-height: 100vh;
+  height: 100%;
+  overflow-y: auto;
   background: #181818;
   color: #e0e0e0;
   font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;

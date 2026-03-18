@@ -924,14 +924,12 @@ onUnmounted(() => {
 
 .presenter-layout {
   display: flex;
-  height: calc(100dvh - var(--nav-h, 46px));
-  width: 100dvw;
+  height: 100%;
+  width: 100%;
   overflow: hidden;
   background-color: #2f2f2f;
   font-family: Arial, sans-serif;
   color: white;
-  margin: 0;
-  padding: 0;
 }
 
 .presenter-area {
@@ -940,8 +938,7 @@ onUnmounted(() => {
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 20px;
-  box-sizing: border-box;
+  padding: 12px;
   overflow: hidden;
 }
 
@@ -950,11 +947,10 @@ onUnmounted(() => {
   flex: 1;
   background: rgba(255,255,255,0.05);
   border-radius: 12px;
-  padding: 20px;
+  padding: 16px;
   text-align: center;
   font-weight: bold;
   overflow: hidden;
-  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -962,16 +958,17 @@ onUnmounted(() => {
   word-break: break-word;
   line-height: 1.1;
   color: white;
+  /* Cap the font so it doesn't take over the whole screen */
+  font-size: clamp(14px, 3vw, 48px);
 }
 
 .sidebar {
   width: 20dvw;
-  height: 100dvh;
+  height: 100%;
   padding: 15px;
   border-left: 1px solid #444;
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
   overflow-y: auto;
 }
 
@@ -1221,84 +1218,7 @@ select:hover, button:hover { background: #555; }
 }
 .meeting-delete-btn:hover { color: #ff6666; background: rgba(255,100,100,0.15); }
 
-/* ---- Mobile portrait: stack vertically, sidebar becomes bottom drawer ---- */
-@media (max-width: 768px) and (orientation: portrait), (max-width: 600px) {
-  .presenter-layout {
-    flex-direction: column;
-  }
-
-  /* Top half — the live display area, no scroll */
-  .presenter-area {
-    width: 100%;
-    height: 45%;
-    min-height: 0;
-    padding: 8px;
-    flex-shrink: 0;
-    overflow: hidden;
-  }
-
-  .text-display {
-    border-radius: 8px;
-    padding: 10px;
-  }
-
-  /* Bottom half — the sidebar, now a horizontal icon bar + panel above it */
-  .right-sidebar {
-    width: 100%;
-    height: 55%;
-    min-height: 0;
-    flex-shrink: 0;
-    max-width: unset;
-    flex-direction: column-reverse; /* icons row at bottom, panel above */
-    box-shadow: 0 -2px 8px rgba(0,0,0,0.15);
-  }
-
-  /* Icon bar runs horizontally across the bottom */
-  .right-sidebar .sidebar-icons {
-    position: relative;
-    width: 100%;
-    height: 52px;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-    padding: 0 8px;
-    gap: 0;
-    border-top: 1px solid #333;
-    box-shadow: none;
-    flex-shrink: 0;
-  }
-
-  /* Panel fills the space above the icon bar */
-  .right-sidebar .sidebar-panels {
-    position: relative;
-    left: unset;
-    top: unset;
-    width: 100%;
-    flex: 1;
-    min-height: 0;
-    box-shadow: none;
-  }
-
-  .right-sidebar .sidebar-panel {
-    height: 100%;
-    padding: 10px 12px 8px;
-    overflow-y: auto;
-  }
-
-  .right-sidebar .clear-panel {
-    height: auto;
-    margin: 4px 8px;
-  }
-
-  @media (max-width: 700px) {
-    .right-sidebar .sidebar-panels {
-      width: 100%;
-      right: unset;
-    }
-  }
-}
-</style>
-<style>
+/* Sidebar styles */
 .right-sidebar {
   position: relative;
   width: 64px;
@@ -1344,13 +1264,8 @@ select:hover, button:hover { background: #555; }
   margin: 0 auto;
 }
 .right-sidebar .sidebar-icons button.active,
-.right-sidebar .sidebar-icons button:hover {
-  background: #444;
-}
-.right-sidebar .icon {
-  font-size: 28px;
-  color: #ccc;
-}
+.right-sidebar .sidebar-icons button:hover { background: #444; }
+.right-sidebar .icon { font-size: 28px; color: #ccc; }
 .right-sidebar .sidebar-panels {
   position: absolute;
   top: 0;
@@ -1368,7 +1283,7 @@ select:hover, button:hover { background: #555; }
   flex-direction: column;
   height: 100%;
   min-height: 0;
-  padding: 24px 18px 18px 18px;
+  padding: 16px 14px 14px 14px;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -1376,6 +1291,55 @@ select:hover, button:hover { background: #555; }
   padding-top: 0;
   background: none;
   box-shadow: none;
+  height: auto;
+  margin: 8px;
+}
+
+/* Mobile portrait: stack vertically, icons become horizontal bottom bar */
+@media (max-width: 768px) and (orientation: portrait), (max-width: 500px) {
+  .presenter-layout { flex-direction: column; }
+  .presenter-area {
+    height: 42%;
+    flex: none;
+    flex-shrink: 0;
+    padding: 8px;
+  }
+  .text-display { border-radius: 8px; padding: 10px; font-size: clamp(14px, 4vw, 32px); }
+  .right-sidebar {
+    width: 100%;
+    height: 58%;
+    flex-shrink: 0;
+    max-width: unset;
+    flex-direction: column-reverse;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.15);
+  }
+  .right-sidebar .sidebar-icons {
+    position: relative;
+    width: 100%;
+    height: 52px;
+    flex-shrink: 0;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 8px;
+    gap: 0;
+    border-top: 1px solid #333;
+    box-shadow: none;
+  }
+  .right-sidebar .sidebar-panels {
+    position: relative;
+    left: unset; top: unset;
+    width: 100%;
+    height: unset;
+    flex: 1;
+    min-height: 0;
+    box-shadow: none;
+  }
+  .right-sidebar .sidebar-panel {
+    height: 100%;
+    padding: 8px 12px 6px;
+    overflow-y: auto;
+  }
 }
 .time-slide-inputs{
   display: flex;
@@ -1391,6 +1355,7 @@ select:hover, button:hover { background: #555; }
   color: white;
   font-size: 13px;
 }
+/* Bible selector group for spacing */
 .bible-selector-group > * {
   margin-bottom: 10px;
 }
@@ -1403,6 +1368,7 @@ select:hover, button:hover { background: #555; }
   margin-top: 2px;
   margin-bottom: 6px;
 }
+/* Uniform number button sizing for chapters/verses and grid layout */
 .bible-grid {
   display: flex;
   flex-wrap: wrap;
@@ -1432,51 +1398,7 @@ select:hover, button:hover { background: #555; }
   background: #777;
 }
 .clear-panel {
-  height: 75px;
+  height: auto !important;
   margin: 8px;
-}
-
-/* ---- Mobile portrait: stack vertically, sidebar becomes bottom strip ---- */
-@media (max-width: 768px) and (orientation: portrait), (max-width: 600px) {
-  .right-sidebar {
-    width: 100%;
-    height: 55%;
-    min-height: 0;
-    max-width: unset;
-    flex-direction: column-reverse;
-    box-shadow: 0 -2px 8px rgba(0,0,0,0.15);
-  }
-  .right-sidebar .sidebar-icons {
-    position: relative;
-    width: 100%;
-    height: 52px;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-    padding: 0 8px;
-    gap: 0;
-    border-top: 1px solid #333;
-    box-shadow: none;
-    flex-shrink: 0;
-  }
-  .right-sidebar .sidebar-panels {
-    position: relative;
-    left: unset;
-    top: unset;
-    width: 100%;
-    height: unset;
-    flex: 1;
-    min-height: 0;
-    box-shadow: none;
-  }
-  .right-sidebar .sidebar-panel {
-    height: 100%;
-    padding: 10px 12px 8px;
-    overflow-y: auto;
-  }
-  .right-sidebar .clear-panel {
-    height: auto;
-    margin: 4px 8px;
-  }
 }
 </style>

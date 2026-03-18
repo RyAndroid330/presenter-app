@@ -25,8 +25,7 @@
     </div>
 
     <div class="sidebar">
-      <button class="back-btn" @click="$router.push('/')">&#x2190; Home</button>
-
+      <div class="sidebar-scroll">
       <!-- Sessions -->
       <div class="panel">
         <div class="section-header">
@@ -112,6 +111,7 @@
           </div>
         </div>
       </div>
+      </div><!-- end sidebar-scroll -->
     </div>
 
     <!-- Song Preview overlay -->
@@ -694,14 +694,12 @@ onMounted(async () => {
 }
 .musician-layout {
   display: flex;
-  height: calc(100dvh - var(--nav-h, 46px));
-  width: 100dvw;
+  height: 100%;
+  width: 100%;
   overflow: hidden;
   background-color: #2f2f2f;
   font-family: Arial, sans-serif;
   color: white;
-  margin: 0;
-  padding: 0;
 }
 
 .main-area {
@@ -710,37 +708,67 @@ onMounted(async () => {
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 20px;
-  box-sizing: border-box;
+  padding: 16px;
   overflow-y: auto;
 }
 
 .sidebar {
   width: 280px;
-  min-width: 220px;
+  min-width: 200px;
+  flex-shrink: 0;
   height: 100%;
-  padding: 15px;
-  border-left: 1px solid #444;
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
-  overflow-y: auto;
-  gap: 12px;
-  flex-shrink: 0;
+  border-left: 1px solid #444;
+  overflow: hidden;
 }
 
-.back-btn {
-  padding: 10px;
-  font-size: 15px;
-  font-weight: bold;
-  border-radius: 8px;
-  border: none;
-  background: #444;
-  color: white;
-  cursor: pointer;
-  text-align: center;
+/* Sidebar scrollable content — everything except the sticky add button */
+.sidebar-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 12px 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
-.back-btn:hover { background: #555; }
+
+/* Sticky action bar at bottom of sidebar */
+.sidebar-actions {
+  flex-shrink: 0;
+  padding: 10px 12px;
+  border-top: 1px solid #444;
+  display: flex;
+  gap: 8px;
+}
+
+/* Mobile layout */
+@media (max-width: 768px) and (orientation: portrait), (max-width: 500px) {
+  .musician-layout {
+    flex-direction: column;
+  }
+  .main-area {
+    width: 100%;
+    height: 40%;
+    flex-shrink: 0;
+    flex: none;
+    padding: 8px;
+  }
+  .sidebar {
+    width: 100%;
+    min-width: 0;
+    height: 60%;
+    flex-shrink: 0;
+    border-left: none;
+    border-top: 1px solid #444;
+  }
+  .se-song { padding: 8px 10px; font-size: 14px; }
+  .import-box { width: 92vw; padding: 16px; }
+  .import-textarea { min-height: 140px; }
+}
+
+
 
 .panel {
   border-top: 1px solid #444;
@@ -1116,45 +1144,6 @@ onMounted(async () => {
   cursor: pointer;
 }
 .preview-add:hover { background: #3a8a3a; }
-
-/* Mobile layout — portrait */
-@media (max-width: 768px) and (orientation: portrait), (max-width: 600px) {
-  .musician-layout {
-    flex-direction: column;
-  }
-  .main-area {
-    width: 100%;
-    height: 45%;
-    min-height: 0;
-    padding: 10px;
-    overflow-y: auto;
-    flex-shrink: 0;
-  }
-  .sidebar {
-    width: 100%;
-    min-width: 0;
-    height: 55%;
-    min-height: 0;
-    border-left: none;
-    border-top: 1px solid #444;
-    padding: 10px;
-    overflow-y: auto;
-    flex-shrink: 0;
-  }
-  .se-song {
-    padding: 8px 10px;
-    font-size: 14px;
-  }
-  .import-box {
-    width: 92vw;
-    padding: 16px;
-  }
-  .import-textarea {
-    min-height: 160px;
-  }
-}
-
-
 
 /* Sharing modal styles */
 .modal-overlay {

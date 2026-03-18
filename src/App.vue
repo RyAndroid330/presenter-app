@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="app-root">
     <header class="app-header">
       <nav class="main-nav">
         <button @click="router.push('/')" class="nav-btn" :class="{ active: route.path === '/' }">Home</button>
@@ -10,35 +10,30 @@
       </nav>
       <div class="user-info">
         <template v-if="user">
-          <img v-if="user.picture || user.photos" :src="user.picture || (user.photos && user.photos[0] && user.photos[0].value)" class="user-avatar" />
-          <span>
-            {{
-              user.displayName ||
-              user.name?.givenName + ' ' + user.name?.familyName ||
-              user.name?.familyName ||
-              user.name?.givenName ||
-              user.email ||
-              (user.emails && user.emails[0] && user.emails[0].value) ||
-              'User'
-            }}
-          </span>
+          <img v-if="user.picture || user.photos" :src="user.picture || (user.photos && user.photos[0] && user.photos[0].value)" class="user-avatar hide-mobile" />
+          <span class="user-name hide-mobile">{{
+            user.displayName ||
+            (user.name?.givenName ? user.name.givenName + ' ' + (user.name.familyName || '') : null) ||
+            user.email ||
+            (user.emails && user.emails[0] && user.emails[0].value) ||
+            'User'
+          }}</span>
           <button @click="logout" class="logout-btn">Logout</button>
         </template>
         <template v-else>
-          <button @click="login" class="login-btn">Login with Google</button>
+          <button @click="login" class="login-btn">Login</button>
         </template>
       </div>
     </header>
-    <!-- Sidebar is now rendered directly in each view, not via slot. -->
-    <router-view />
+    <div class="view-container">
+      <router-view />
+    </div>
   </div>
 </template>
 
 <script setup>
-// Navigation logic for navbar
 function restrictedNav(path) {
   if (!user.value) {
-    // Show login dialog if not logged in
     window.location.href = '/auth/google'
     return
   }
@@ -48,6 +43,7 @@ function restrictedNav(path) {
 function openViewerDialog() {
   router.push('/viewer')
 }
+
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 const user = ref(null)
@@ -77,71 +73,88 @@ function logout() {
 }
 
 onMounted(fetchUser)
-
-// Re-fetch user info after every route change
-router.afterEach(() => {
-  fetchUser()
-})
+router.afterEach(() => { fetchUser() })
 </script>
 
 <style>
 :root {
-  --nav-h: 46px;
+  --nav-h: 44px;
 }
 
-html, body, #app {
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
   margin: 0;
   padding: 0;
+  width: 100%;
+  height: 100%;
+  background: #2f2f2f;
+  overflow: hidden;
+}
+
+#app {
   width: 100dvw;
   height: 100dvh;
   overflow: hidden;
-  background: #2f2f2f;
 }
 
-/* The top-level wrapper: header + router-view fill the viewport exactly */
-#app > div {
+.app-root {
   display: flex;
   flex-direction: column;
-  height: 100dvh;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
 }
 
 .app-header {
   flex-shrink: 0;
-  width: 100%;
   height: var(--nav-h);
+  width: 100%;
   background: #232323;
   color: #fff;
-  padding: 0 20px;
+  padding: 0 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-sizing: border-box;
   z-index: 50;
 }
+
+/* This is the slot that all views fill */
+.view-container {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
 .main-nav {
   display: flex;
-  gap: 16px;
+  gap: 4px;
 }
+
 .nav-btn {
   background: none;
   border: none;
   color: #aaa;
-  font-size: 1em;
-  padding: 6px 14px;
+  font-size: 0.9em;
+  padding: 5px 12px;
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
   font-weight: 500;
   position: relative;
+  white-space: nowrap;
 }
 .nav-btn::after {
   content: '';
   display: block;
   position: absolute;
   bottom: -2px;
-  left: 14px;
-  right: 14px;
+  left: 12px;
+  right: 12px;
   height: 2px;
   border-radius: 2px;
   background: var(--accent-color, #4fc3f7);
@@ -149,76 +162,58 @@ html, body, #app {
   transition: transform 0.15s;
 }
 .nav-btn:hover {
-  background: rgba(79, 195, 247, 0.08);
+  background: rgba(79,195,247,0.08);
   color: var(--accent-color, #4fc3f7);
 }
-.nav-btn:hover::after {
-  transform: scaleX(1);
-}
+.nav-btn:hover::after { transform: scaleX(1); }
 .nav-btn.active {
   color: var(--accent-color, #4fc3f7);
-  background: rgba(79, 195, 247, 0.12);
+  background: rgba(79,195,247,0.12);
 }
-.nav-btn.active::after {
-  transform: scaleX(1);
-}
+.nav-btn.active::after { transform: scaleX(1); }
+
 .user-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  flex-shrink: 0;
 }
 .user-avatar {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   object-fit: cover;
+}
+.user-name {
+  font-size: 0.85em;
+  color: #ccc;
+  white-space: nowrap;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .login-btn, .logout-btn {
   background: #444;
   color: #fff;
   border: none;
   border-radius: 8px;
-  padding: 6px 16px;
-  font-size: 16px;
+  padding: 5px 14px;
+  font-size: 0.85em;
   cursor: pointer;
+  white-space: nowrap;
 }
-.login-btn:hover, .logout-btn:hover {
-  background: #666;
-}
+.login-btn:hover, .logout-btn:hover { background: #666; }
 
-@media (max-width: 768px) {
-  .app-header {
-    padding: 0 8px;
-  }
-}
-
+/* Mobile: hide name and avatar, keep only logout */
 @media (max-width: 600px) {
-  :root {
-    --nav-h: 80px;
+  :root { --nav-h: 44px; }
+  .hide-mobile { display: none !important; }
+  .nav-btn {
+    font-size: 0.78em;
+    padding: 4px 7px;
   }
   .app-header {
-    height: var(--nav-h);
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 4px;
-    padding: 6px 8px;
-  }
-  .user-info {
-    gap: 6px;
-  }
-  .user-avatar {
-    width: 26px;
-    height: 26px;
-  }
-  .login-btn, .logout-btn {
-    font-size: 13px;
-    padding: 4px 10px;
-    border-radius: 6px;
-  }
-  .nav-btn {
-    font-size: 0.85em;
-    padding: 4px 8px;
+    padding: 0 6px;
   }
 }
 </style>
