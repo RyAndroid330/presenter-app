@@ -19,6 +19,7 @@
         <button class="save-back-btn" @click="saveAndBack">&#x2714; Save &amp; Back</button>
       </div>
 
+      <div class="sidebar-scroll">
       <label class="field-label">Lesson Name</label>
       <div class="name-row">
         <input v-model="lessonName" @change="updateName" class="name-input" placeholder="Lesson name" />
@@ -150,8 +151,9 @@
           <button v-if="verseStart" @click="insertVerse">Insert Verse</button>
           <button v-if="verseStart" class="clear-btn" @click="clearVerseSelection">Clear</button>
         </div>
-      </div>
+      </div><!-- end sidebar-scroll -->
     </div>
+  </div>
   </div>
 </template>
 
@@ -629,7 +631,6 @@ onUnmounted(() => {
   if (fitText) fitText.cleanup()
 })
 </script>
-
 <style scoped>
 /* ── Layout ── */
 .editor-layout {
@@ -642,42 +643,42 @@ onUnmounted(() => {
   font-family: inherit;
 }
 
+/* Left: editor + sticky save bar */
 .main-area {
   flex: 1;
   min-width: 0;
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 16px;
+  padding: 14px;
   overflow: hidden;
 }
 
-/* Slide text editor */
 .text-input {
   flex: 1;
-  min-height: 60px;
+  min-height: 0;
   background: rgba(255,255,255,0.04);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
   padding: 20px;
   text-align: center;
   font-weight: bold;
-  font-size: 1.2em;
+  font-size: 1.15em;
   overflow: auto;
   white-space: pre-wrap;
   word-break: break-word;
   line-height: 1.2;
   color: var(--text-primary);
   outline: none;
+  box-sizing: border-box;
 }
 .text-input:focus { border-color: var(--accent); }
 
-/* Save bar — always visible */
+/* Save always visible at bottom */
 .bottom-bar {
   flex-shrink: 0;
   padding-top: 10px;
   display: flex;
-  gap: 8px;
 }
 .save-btn {
   flex: 1;
@@ -702,10 +703,10 @@ onUnmounted(() => {
   flex-direction: column;
   border-left: 1px solid var(--border-light);
   background: var(--bg-surface);
-  overflow: hidden;
+  overflow: hidden;         /* critical — clips children */
 }
 
-/* Sticky action row */
+/* Sticky top buttons — never scroll away */
 .sidebar-top-row {
   flex-shrink: 0;
   display: flex;
@@ -724,25 +725,31 @@ onUnmounted(() => {
   white-space: nowrap;
   color: var(--text-primary);
 }
-.back-btn { background: var(--bg-active); }
+.back-btn       { background: var(--bg-active); }
 .back-btn:hover { background: #555; }
-.save-back-btn { background: #2a6a2a; }
+.save-back-btn       { background: #2a6a2a; color: #fff; }
 .save-back-btn:hover { background: #3a8a3a; }
 
-/* Scrollable sidebar content */
+/* Scrollable content — takes remaining height */
 .sidebar-scroll {
   flex: 1;
-  min-height: 0;
+  min-height: 0;            /* must have this for overflow to work in flex */
   overflow-y: auto;
-  padding: 10px 12px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
 /* ── Form elements ── */
-.field-label { font-size: 11px; color: var(--text-faint); font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; }
-.field-label .hint { text-transform: none; font-weight: normal; font-style: italic; letter-spacing: 0; color: var(--text-faint); }
+.field-label {
+  font-size: 11px;
+  color: var(--text-faint);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.field-label .hint { text-transform: none; font-weight: normal; letter-spacing: 0; }
 
 .name-row { display: flex; }
 .name-input {
@@ -752,7 +759,7 @@ onUnmounted(() => {
   border: 1px solid var(--border);
   background: var(--bg-input);
   color: var(--text-primary);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: bold;
 }
 
@@ -764,6 +771,7 @@ select {
   background: var(--bg-input);
   color: var(--text-primary);
   font-size: 13px;
+  font-family: inherit;
 }
 select option { background: var(--bg-surface); }
 
@@ -773,42 +781,30 @@ select option { background: var(--bg-surface); }
 .share-btn {
   background: #2a6a8a; color: #fff; border: none;
   border-radius: var(--radius-sm); padding: 5px 12px;
-  font-size: 13px; cursor: pointer;
+  font-size: 13px; cursor: pointer; font-family: inherit;
 }
 .share-btn:hover { background: #3a8aba; }
 .sharing-status { font-size: 12px; color: #8ad; }
 
 /* ── Slides list ── */
-.slides-section { display: flex; flex-direction: column; gap: 6px; padding-top: 10px; border-top: 1px solid var(--border); }
+.slides-section { display: flex; flex-direction: column; gap: 6px; padding-top: 8px; border-top: 1px solid var(--border); }
 .slides-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-faint);
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--text-faint);
 }
 .slide-add-btn {
-  width: 26px; height: 26px;
-  border-radius: var(--radius-sm); border: none;
-  background: var(--bg-active); color: var(--text-primary);
-  font-size: 18px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; border-radius: var(--radius-sm);
+  border: none; background: var(--bg-active); color: var(--text-primary);
+  font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: inherit;
 }
 .slide-add-btn:hover { background: #666; }
 
 .slide-list { display: flex; flex-direction: column; gap: 3px; }
 .slide-item {
-  display: flex;
-  align-items: center;
-  padding: 5px 8px;
-  border-radius: var(--radius);
-  background: var(--bg-hover);
-  cursor: pointer;
-  font-size: 13px;
-  color: var(--text-primary);
+  display: flex; align-items: center; padding: 5px 8px;
+  border-radius: var(--radius); background: var(--bg-hover);
+  cursor: pointer; font-size: 13px; color: var(--text-primary);
 }
 .slide-item:hover { background: var(--bg-active); }
 .slide-item.active { background: var(--accent-dim); color: var(--accent); }
@@ -822,30 +818,23 @@ select option { background: var(--bg-surface); }
 }
 .slide-move-btn {
   background: none; border: none; color: var(--text-faint);
-  font-size: 10px; cursor: pointer; padding: 2px 4px; border-radius: 3px;
+  font-size: 10px; cursor: pointer; padding: 2px 4px; border-radius: 3px; font-family: inherit;
 }
 .slide-move-btn:hover:not(:disabled) { color: var(--text-primary); background: var(--bg-active); }
 .slide-move-btn:disabled { opacity: 0.25; cursor: default; }
 .slide-delete-btn {
   background: none; border: none; color: var(--text-faint);
-  font-size: 13px; cursor: pointer; padding: 2px 4px; border-radius: 3px;
+  font-size: 13px; cursor: pointer; padding: 2px 4px; border-radius: 3px; font-family: inherit;
 }
 .slide-delete-btn:hover { color: var(--danger); background: var(--danger-hover); }
 
 /* ── Bible section ── */
-.bible-section { padding-top: 10px; border-top: 1px solid var(--border); }
+.bible-section { padding-top: 8px; border-top: 1px solid var(--border); }
 .bible-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-faint);
-  padding: 4px 0;
-  user-select: none;
+  display: flex; justify-content: space-between; align-items: center;
+  cursor: pointer; font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--text-faint);
+  padding: 4px 0; user-select: none;
 }
 .toggle-arrow { font-size: 10px; }
 
@@ -856,7 +845,7 @@ select option { background: var(--bg-surface); }
 .chapter-btn, .verse-btn {
   border: none; border-radius: var(--radius-sm);
   background: var(--bg-active); color: var(--text-primary);
-  cursor: pointer; font-size: 12px; padding: 0;
+  cursor: pointer; font-size: 12px; padding: 0; font-family: inherit;
   display: flex; align-items: center; justify-content: center;
 }
 .chapter-btn { width: 36px; height: 36px; }
@@ -866,11 +855,12 @@ select option { background: var(--bg-surface); }
 .verse-label { font-size: 12px; color: var(--text-muted); }
 .verse-buttons { display: flex; flex-wrap: wrap; gap: 4px; }
 
-button.clear-btn {
+.clear-btn {
   background: #553333; color: #ffaaaa; border: none;
-  border-radius: var(--radius); padding: 6px 12px; cursor: pointer; font-size: 13px;
+  border-radius: var(--radius); padding: 6px 12px;
+  cursor: pointer; font-size: 13px; font-family: inherit;
 }
-button.clear-btn:hover { background: #774444; }
+.clear-btn:hover { background: #774444; }
 
 /* ── Animations ── */
 .text-input.shrink-out { animation: shrinkOut 0.35s ease-in forwards; }
@@ -909,7 +899,7 @@ button.clear-btn:hover { background: #774444; }
   .editor-layout { flex-direction: column; }
   .main-area { height: 42%; flex: none; flex-shrink: 0; padding: 8px; overflow: hidden; }
   .sidebar { width: 100%; min-width: 0; height: 58%; border-left: none; border-top: 1px solid var(--border-light); }
-  .text-input { padding: 12px; font-size: 1em; }
+  .text-input { padding: 10px; font-size: 1em; }
   .chapter-btn { width: 32px; height: 32px; }
   .verse-btn   { width: 28px; height: 28px; }
 }

@@ -192,8 +192,8 @@ onUnmounted(() => {
   disableNoSleepVideo()
 })
 </script>
-
 <style scoped>
+/* ── Layout ── */
 .viewer {
   height: 100%;
   width: 100%;
@@ -206,64 +206,82 @@ onUnmounted(() => {
   position: relative;
 }
 
+/* Waiting state */
 .waiting-message {
+  font-size: 1.4em;
   color: var(--text-faint);
-  font-size: 1.2em;
+  text-align: center;
+  pointer-events: none;
 }
 
+/* ── Main display — fills the space, fitText sets font-size ── */
 .display {
-  width: 80%;
-  max-width: 900px;
-  max-height: 80%;
+  /* Fill almost all of the viewer so fitText has max room */
+  width: 92%;
+  height: 92%;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   font-weight: bold;
-  font-size: clamp(20px, 4vw, 64px);
+  /* No font-size here — useFitText.js owns that */
   white-space: pre-wrap;
   word-break: break-word;
   line-height: 1.15;
   color: var(--text-primary);
+  overflow: hidden;
 }
 
-/* Chord sheet */
+/* ── Chord sheet — when music view is active ── */
 .chord-sheet {
   font-family: 'Courier New', Courier, monospace;
-  font-size: clamp(13px, 2vw, 36px);
+  font-size: clamp(13px, 2vw, 34px);
   white-space: pre;
   overflow: auto;
-  padding: 24px;
+  padding: 24px 32px;
   max-width: 95vw;
-  max-height: 88%;
+  max-height: 92%;
+  line-height: 1.3;
 }
 .cs-chords { color: var(--accent); font-weight: bold; line-height: 1.2; }
-.cs-text   { color: var(--text-primary); line-height: 1.5; }
+.cs-text   { color: var(--text-primary); margin-bottom: 0.5em; }
 
-/* Music toggle button */
+/* ── Music toggle button — inverted: accent bg, dark icon ── */
 .chord-toggle {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
-  background: var(--accent);
-  color: #fff;
-  border: none;
-  border-radius: 50%;
+  bottom: 22px;
+  right: 22px;
   width: 52px;
   height: 52px;
-  font-size: 1.6em;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  border-radius: 50%;
+  border: none;
+  /* Inverted: accent background, dark symbol */
+  background: var(--accent);
+  color: var(--bg-base, #181818);
+  font-size: 26px;
   cursor: pointer;
-  transition: background var(--transition);
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  transition: background var(--transition), transform var(--transition);
+  padding: 0;
+  line-height: 1;
 }
-.chord-toggle:hover, .chord-toggle.active { background: var(--accent-hover); }
+.chord-toggle:hover    { background: var(--accent-hover); transform: scale(1.08); }
+/* Active = currently showing chords: slightly different shade to show state */
+.chord-toggle.active   { background: var(--accent-hover); box-shadow: 0 4px 20px rgba(29,185,84,0.4); }
 
+/* ── Mobile ── */
 @media (max-width: 600px) {
-  .display { font-size: clamp(18px, 6vw, 40px); width: 95%; }
-  .chord-toggle { width: 44px; height: 44px; font-size: 1.3em; bottom: 16px; right: 16px; }
+  .display { width: 96%; height: 88%; }
+  .chord-sheet {
+    padding: 12px 8px;
+    font-size: clamp(11px, 3.5vw, 20px);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .chord-toggle { width: 44px; height: 44px; font-size: 22px; bottom: 14px; right: 14px; }
 }
 </style>
