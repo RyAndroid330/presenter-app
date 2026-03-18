@@ -4,7 +4,7 @@
       <div ref="textInputRef" class="text-display"></div>
     </div>
     <div class="right-sidebar">
-      <div class="sidebar-icons">
+      <div class="sidebar-icons sidebar-top">
         <button :class="{active: openPanel==='main'}" @click="togglePanel('main')" title="Main Tools">
           <span class="icon material-icons">dashboard_customize</span>
         </button>
@@ -1404,5 +1404,49 @@ select:hover, button:hover { background: #555; }
 .clear-panel{
 height: 75px;
 margin: 8px;
+}
+
+@media (max-width: 480px) {
+  .presenter-layout {
+    flex-direction: column;
+    padding: 4px 0;
+  }
+  .right-sidebar {
+    width: 100vw;
+    min-width: 0;
+    border-radius: 0 0 8px 8px;
+    margin-bottom: 8px;
+    padding: 8px 2px;
+    position: static;
+    max-width: unset;
+  }
+  .presenter-area {
+    width: 100vw;
+    min-width: 0;
+    padding: 0 2px;
+    height: auto;
+    min-height: 0;
+  }
+  .text-display {
+    font-size: 1em;
+    min-width: 0;
+    width: 98vw;
+    max-width: 100vw;
+    border-radius: 8px;
+    padding: 8px 2px;
+  }
+  .right-sidebar .sidebar-panels {
+    width: 100vw;
+    left: 0;
+    top: unset;
+    position: static;
+    box-shadow: none;
+    padding: 0 2px;
+  }
+  .right-sidebar .sidebar-panel {
+    height: auto;
+    min-height: 0;
+    padding: 12px 4px 8px 4px;
+  }
 }
 </style>

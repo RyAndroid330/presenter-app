@@ -14,8 +14,10 @@
     </div>
 
     <div class="sidebar">
-      <button class="back-btn" @click="goBack">&#x2190; Back</button>
-      <button class="save-back-btn" @click="saveAndBack">&#x2714; Save &amp; Back</button>
+      <div class="sidebar-top-row">
+        <button class="back-btn" @click="goBack">&#x2190; Back</button>
+        <button class="save-back-btn" @click="saveAndBack">&#x2714; Save &amp; Back</button>
+      </div>
 
       <label class="field-label">Lesson Name</label>
       <div class="name-row">
@@ -711,6 +713,7 @@ onUnmounted(() => {
   padding: 20px;
   box-sizing: border-box;
   overflow: hidden;
+  min-height: 0;
 }
 
 .sidebar {
@@ -720,9 +723,17 @@ onUnmounted(() => {
   border-left: 1px solid #444;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   box-sizing: border-box;
   overflow-y: auto;
   gap: 10px;
+}
+.sidebar .sidebar-top-row {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 10px;
 }
 
 .back-btn, .save-back-btn {
@@ -815,13 +826,15 @@ select:hover, input:hover, button:hover { background: #555; }
 
 .text-input {
   width: 100%;
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 80px;
+  max-height: 90%;
   background: rgba(255,255,255,0.05);
   border-radius: 12px;
   padding: 20px;
   text-align: center;
   font-weight: bold;
-  overflow: hidden;
+  overflow: auto;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -971,7 +984,53 @@ select:hover, input:hover, button:hover { background: #555; }
   display: flex;
   gap: 2px;
   align-items: center;
-  margin-left: 4px;
+
+@media (max-width: 900px) {
+  .editor-layout {
+    flex-direction: column;
+    padding: 10px 2px;
+  }
+  .sidebar {
+    width: 100%;
+    min-width: 0;
+    border-radius: 0 0 12px 12px;
+    margin-bottom: 12px;
+  }
+  .main-area {
+    width: 100%;
+    min-width: 0;
+    padding: 0 2px;
+  }
+}
+
+@media (max-width: 600px) {
+  .editor-layout {
+    flex-direction: column;
+    padding: 4px 0;
+  }
+  .sidebar {
+    width: 100vw;
+    min-width: 0;
+    border-radius: 0 0 8px 8px;
+    margin-bottom: 8px;
+    padding: 8px 2px;
+  }
+  .main-area {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    padding: 8px;
+  }
+  .text-input {
+    max-height: 28vh;
+    min-height: 60px;
+    flex-basis: 180px;
+  }
+    font-size: 1em;
+    min-width: 0;
+    width: 98vw;
+    max-width: 100vw;
+  }
 }
 
 .slide-move-btn {

@@ -326,6 +326,41 @@ onUnmounted(() => {
   color: #4fc3f7;
 }
 
+@media (max-width: 480px) {
+  .viewer {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0 2px;
+    height: auto;
+    min-height: 100vh;
+  }
+  .display {
+    width: 98vw;
+    height: auto;
+    min-height: 30vh;
+    font-size: 1.1em;
+    padding: 0.5em 0.2em;
+    border-radius: 8px;
+  }
+  .chord-sheet {
+    max-width: 100vw;
+    padding: 6px;
+    font-size: clamp(11px, 4vw, 18px);
+    border-radius: 8px;
+  }
+  .waiting-message {
+    font-size: 1.1em;
+    top: 30%;
+  }
+  .chord-toggle {
+    width: 38px;
+    height: 38px;
+    font-size: 1em;
+    bottom: 8px;
+    right: 8px;
+  }
+}
+
 @media (max-width: 768px) {
   .display {
     width: 92vw;

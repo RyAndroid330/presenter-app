@@ -1,26 +1,7 @@
 <template>
   <!-- Mac Dark Mode meets Spotify styling -->
   <div class="home-layout">
-    <aside class="sidebar" :class="{ expanded: sidebarHover }" @mouseenter="sidebarHover = true" @mouseleave="sidebarHover = false">
-      <div class="sidebar-buttons">
-        <button @click="restrictedNav('/presenter')">
-          <span class="icon material-icons">slideshow</span>
-          <span class="label">Slides</span>
-        </button>
-        <button @click="restrictedNav('/teacher')">
-          <span class="icon material-icons">school</span>
-          <span class="label">Teacher</span>
-        </button>
-        <button @click="restrictedNav('/musician')">
-          <span class="icon material-icons">piano</span>
-          <span class="label">Musician</span>
-        </button>
-        <button @click="openViewerDialog">
-          <span class="icon material-icons">visibility</span>
-          <span class="label">Viewer</span>
-        </button>
-      </div>
-    </aside>
+    <!-- Sidebar removed, navigation is now in the top navbar. -->
     <main class="main-content">
       <h1>Welcome to StudyLink</h1>
       <p class="welcome-msg">Your meeting, on every screen.</p>
@@ -147,11 +128,11 @@ onUnmounted(() => {
 <style scoped>
 .home-layout {
   display: flex;
-  min-height: 100vh;
+  min-height: 90vh;
   background: #181818;
 }
 .sidebar {
-  width: 64px;
+  width: 75px;
   background: #232323;
   color: #fff;
   transition: width 0.2s;
@@ -165,6 +146,8 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: 1em;
+  height: 100%;
+  justify-content: center;
 }
 .sidebar button {
   display: flex;
@@ -221,6 +204,62 @@ h1 {
   justify-content: space-between;
   padding: 0.7em 0;
   border-bottom: 1px solid #333;
+
+  @media (max-width: 900px) {
+    .main-content {
+      padding: 1.2em 0.7em;
+    }
+    .meetings-card {
+      padding: 1em;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .home-layout {
+      flex-direction: column;
+    }
+    .sidebar {
+      width: 100vw;
+      min-width: 0;
+      flex-direction: row;
+      padding-top: 0.5em;
+      box-shadow: none;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .sidebar.expanded {
+      width: 100vw;
+    }
+    .sidebar-buttons {
+      flex-direction: row;
+      gap: 0.5em;
+      justify-content: space-around;
+    }
+    .sidebar button {
+      font-size: 1em;
+      padding: 0.5em 0.7em;
+      border-radius: 10px;
+    }
+    .icon {
+      margin-right: 0.3em;
+      font-size: 1.2em;
+    }
+    .main-content {
+      padding: 1em 0.3em;
+    }
+    h1 {
+      font-size: 1.3em;
+    }
+    .meetings-card {
+      border-radius: 8px;
+      padding: 0.7em;
+    }
+    .meeting-row {
+      font-size: 0.98em;
+      padding: 0.5em 0;
+    }
+  }
 }
 .meeting-name {
   font-weight: 500;

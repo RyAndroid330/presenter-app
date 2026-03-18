@@ -1145,7 +1145,38 @@ onMounted(async () => {
   .import-textarea {
     min-height: 200px;
   }
-}
+  }
+
+  @media (max-width: 480px) {
+    .musician-layout {
+      flex-direction: column;
+      padding: 4px 0;
+    }
+    .sidebar {
+      width: 100vw;
+      min-width: 0;
+      border-radius: 0 0 8px 8px;
+      margin-bottom: 8px;
+      padding: 8px 2px;
+      height: auto;
+      max-height: unset;
+    }
+    .main-area {
+      width: 100vw;
+      min-width: 0;
+      padding: 0 2px;
+      height: auto;
+      min-height: 0;
+    }
+    .item-list {
+      font-size: 1em;
+    }
+    .se-song {
+      font-size: 1em;
+      padding: 8px 4px;
+    }
+  }
+
 
 
 /* Sharing modal styles */
