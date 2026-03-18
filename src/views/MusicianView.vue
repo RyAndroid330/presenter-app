@@ -694,7 +694,7 @@ onMounted(async () => {
 }
 .musician-layout {
   display: flex;
-  height: 100dvh;
+  height: calc(100dvh - var(--nav-h, 46px));
   width: 100dvw;
   overflow: hidden;
   background-color: #2f2f2f;
@@ -705,8 +705,9 @@ onMounted(async () => {
 }
 
 .main-area {
-  width: 80dvw;
-  height: 100dvh;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
   display: flex;
   flex-direction: column;
   padding: 20px;
@@ -715,8 +716,9 @@ onMounted(async () => {
 }
 
 .sidebar {
-  width: 20dvw;
-  height: 100dvh;
+  width: 280px;
+  min-width: 220px;
+  height: 100%;
   padding: 15px;
   border-left: 1px solid #444;
   display: flex;
@@ -724,6 +726,7 @@ onMounted(async () => {
   box-sizing: border-box;
   overflow-y: auto;
   gap: 12px;
+  flex-shrink: 0;
 }
 
 .back-btn {
@@ -1114,25 +1117,29 @@ onMounted(async () => {
 }
 .preview-add:hover { background: #3a8a3a; }
 
-/* Mobile layout */
-@media (max-width: 768px) {
+/* Mobile layout — portrait */
+@media (max-width: 768px) and (orientation: portrait), (max-width: 600px) {
   .musician-layout {
     flex-direction: column;
-    overflow: hidden;
   }
   .main-area {
     width: 100%;
-    height: 45dvh;
+    height: 45%;
     min-height: 0;
-    padding: 8px;
+    padding: 10px;
+    overflow-y: auto;
+    flex-shrink: 0;
   }
   .sidebar {
     width: 100%;
-    height: 55dvh;
+    min-width: 0;
+    height: 55%;
+    min-height: 0;
     border-left: none;
     border-top: 1px solid #444;
     padding: 10px;
-    gap: 8px;
+    overflow-y: auto;
+    flex-shrink: 0;
   }
   .se-song {
     padding: 8px 10px;
@@ -1143,39 +1150,9 @@ onMounted(async () => {
     padding: 16px;
   }
   .import-textarea {
-    min-height: 200px;
+    min-height: 160px;
   }
-  }
-
-  @media (max-width: 480px) {
-    .musician-layout {
-      flex-direction: column;
-      padding: 4px 0;
-    }
-    .sidebar {
-      width: 100vw;
-      min-width: 0;
-      border-radius: 0 0 8px 8px;
-      margin-bottom: 8px;
-      padding: 8px 2px;
-      height: auto;
-      max-height: unset;
-    }
-    .main-area {
-      width: 100vw;
-      min-width: 0;
-      padding: 0 2px;
-      height: auto;
-      min-height: 0;
-    }
-    .item-list {
-      font-size: 1em;
-    }
-    .se-song {
-      font-size: 1em;
-      padding: 8px 4px;
-    }
-  }
+}
 
 
 

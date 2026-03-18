@@ -695,7 +695,7 @@ onUnmounted(() => {
 
 .editor-layout {
   display: flex;
-  height: 100dvh;
+  height: calc(100dvh - var(--nav-h, 46px));
   width: 100dvw;
   overflow: hidden;
   background-color: #2f2f2f;
@@ -706,8 +706,9 @@ onUnmounted(() => {
 }
 
 .main-area {
-  width: 80dvw;
-  height: 100dvh;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
   display: flex;
   flex-direction: column;
   padding: 20px;
@@ -717,8 +718,9 @@ onUnmounted(() => {
 }
 
 .sidebar {
-  width: 20dvw;
-  height: 100dvh;
+  width: 300px;
+  min-width: 240px;
+  height: 100%;
   padding: 15px;
   border-left: 1px solid #444;
   display: flex;
@@ -727,6 +729,7 @@ onUnmounted(() => {
   box-sizing: border-box;
   overflow-y: auto;
   gap: 10px;
+  flex-shrink: 0;
 }
 .sidebar .sidebar-top-row {
   display: flex;
@@ -984,52 +987,46 @@ select:hover, input:hover, button:hover { background: #555; }
   display: flex;
   gap: 2px;
   align-items: center;
-
-@media (max-width: 900px) {
-  .editor-layout {
-    flex-direction: column;
-    padding: 10px 2px;
-  }
-  .sidebar {
-    width: 100%;
-    min-width: 0;
-    border-radius: 0 0 12px 12px;
-    margin-bottom: 12px;
-  }
-  .main-area {
-    width: 100%;
-    min-width: 0;
-    padding: 0 2px;
-  }
 }
 
-@media (max-width: 600px) {
+/* Mobile layout — portrait */
+@media (max-width: 768px) and (orientation: portrait), (max-width: 600px) {
   .editor-layout {
     flex-direction: column;
-    padding: 4px 0;
-  }
-  .sidebar {
-    width: 100vw;
-    min-width: 0;
-    border-radius: 0 0 8px 8px;
-    margin-bottom: 8px;
-    padding: 8px 2px;
   }
   .main-area {
     width: 100%;
-    height: auto;
+    height: 45%;
     min-height: 0;
-    padding: 8px;
+    padding: 10px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .sidebar {
+    width: 100%;
+    min-width: 0;
+    height: 55%;
+    min-height: 0;
+    border-left: none;
+    border-top: 1px solid #444;
+    padding: 10px;
+    overflow-y: auto;
+    flex-shrink: 0;
   }
   .text-input {
-    max-height: 28vh;
-    min-height: 60px;
-    flex-basis: 180px;
-  }
+    border-radius: 8px;
+    padding: 12px;
     font-size: 1em;
-    min-width: 0;
-    width: 98vw;
-    max-width: 100vw;
+  }
+  .chapter-btn {
+    width: 34px;
+    height: 34px;
+    font-size: 12px;
+  }
+  .verse-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 11px;
   }
 }
 
@@ -1056,43 +1053,6 @@ select:hover, input:hover, button:hover { background: #555; }
   border-radius: 4px;
 }
 .slide-delete-btn:hover { color: #ff6666; background: rgba(255,100,100,0.15); }
-
-/* Mobile layout */
-@media (max-width: 768px) {
-  .editor-layout {
-    flex-direction: column;
-    overflow: hidden;
-  }
-  .main-area {
-    width: 100%;
-    height: 45dvh;
-    min-height: 0;
-    padding: 8px;
-  }
-  .sidebar {
-    width: 100%;
-    height: 55dvh;
-    border-left: none;
-    border-top: 1px solid #444;
-    padding: 10px;
-    gap: 8px;
-  }
-  .text-input {
-    border-radius: 8px;
-    padding: 12px;
-  }
-  .chapter-btn {
-    width: 36px;
-    height: 36px;
-    font-size: 13px;
-  }
-  .verse-btn {
-    width: 32px;
-    height: 32px;
-    font-size: 12px;
-  }
-}
-
 
 /* Sharing modal styles */
 .modal-overlay {

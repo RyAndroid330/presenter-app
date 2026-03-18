@@ -85,6 +85,10 @@ router.afterEach(() => {
 </script>
 
 <style>
+:root {
+  --nav-h: 46px;
+}
+
 html, body, #app {
   margin: 0;
   padding: 0;
@@ -94,15 +98,26 @@ html, body, #app {
   background: #2f2f2f;
 }
 
+/* The top-level wrapper: header + router-view fill the viewport exactly */
+#app > div {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+}
+
 .app-header {
+  flex-shrink: 0;
   width: 100%;
+  height: var(--nav-h);
   background: #232323;
   color: #fff;
-  padding: 8px 20px;
+  padding: 0 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   box-sizing: border-box;
+  z-index: 50;
 }
 .main-nav {
   display: flex;
@@ -172,39 +187,38 @@ html, body, #app {
 }
 
 @media (max-width: 768px) {
-  html, body, #app {
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-  }
   .app-header {
-    padding: 8px 8px;
+    padding: 0 8px;
   }
 }
 
 @media (max-width: 600px) {
-  html, body, #app {
-    width: 100vw;
-    height: auto;
-    min-height: 100vh;
-    font-size: 15px;
+  :root {
+    --nav-h: 80px;
   }
   .app-header {
+    height: var(--nav-h);
     flex-direction: column;
     align-items: flex-start;
-    gap: 6px;
-    padding: 8px 2px;
+    justify-content: center;
+    gap: 4px;
+    padding: 6px 8px;
   }
   .user-info {
     gap: 6px;
   }
   .user-avatar {
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
   }
   .login-btn, .logout-btn {
-    font-size: 15px;
-    padding: 5px 10px;
+    font-size: 13px;
+    padding: 4px 10px;
     border-radius: 6px;
+  }
+  .nav-btn {
+    font-size: 0.85em;
+    padding: 4px 8px;
   }
 }
 </style>

@@ -924,7 +924,7 @@ onUnmounted(() => {
 
 .presenter-layout {
   display: flex;
-  height: 100dvh;
+  height: calc(100dvh - var(--nav-h, 46px));
   width: 100dvw;
   overflow: hidden;
   background-color: #2f2f2f;
@@ -935,8 +935,9 @@ onUnmounted(() => {
 }
 
 .presenter-area {
-  width: 80dvw;
-  height: 100dvh;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
   display: flex;
   flex-direction: column;
   padding: 20px;
@@ -1220,39 +1221,90 @@ select:hover, button:hover { background: #555; }
 }
 .meeting-delete-btn:hover { color: #ff6666; background: rgba(255,100,100,0.15); }
 
-@media (max-width: 768px) {
+/* ---- Mobile portrait: stack vertically, sidebar becomes bottom drawer ---- */
+@media (max-width: 768px) and (orientation: portrait), (max-width: 600px) {
   .presenter-layout {
     flex-direction: column;
-    overflow: hidden;
   }
+
+  /* Top half — the live display area, no scroll */
   .presenter-area {
     width: 100%;
-    height: 45dvh;
+    height: 45%;
     min-height: 0;
     padding: 8px;
+    flex-shrink: 0;
+    overflow: hidden;
   }
-  .sidebar {
-    width: 100%;
-    height: 55dvh;
-    border-left: none;
-    border-top: 1px solid #444;
-    padding: 10px;
-    gap: 8px;
-  }
+
   .text-display {
     border-radius: 8px;
     padding: 10px;
   }
-  .clear-btn {
-    margin-top: 6px;
+
+  /* Bottom half — the sidebar, now a horizontal icon bar + panel above it */
+  .right-sidebar {
+    width: 100%;
+    height: 55%;
+    min-height: 0;
+    flex-shrink: 0;
+    max-width: unset;
+    flex-direction: column-reverse; /* icons row at bottom, panel above */
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.15);
+  }
+
+  /* Icon bar runs horizontally across the bottom */
+  .right-sidebar .sidebar-icons {
+    position: relative;
+    width: 100%;
+    height: 52px;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 8px;
+    gap: 0;
+    border-top: 1px solid #333;
+    box-shadow: none;
+    flex-shrink: 0;
+  }
+
+  /* Panel fills the space above the icon bar */
+  .right-sidebar .sidebar-panels {
+    position: relative;
+    left: unset;
+    top: unset;
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    box-shadow: none;
+  }
+
+  .right-sidebar .sidebar-panel {
+    height: 100%;
+    padding: 10px 12px 8px;
+    overflow-y: auto;
+  }
+
+  .right-sidebar .clear-panel {
+    height: auto;
+    margin: 4px 8px;
+  }
+
+  @media (max-width: 700px) {
+    .right-sidebar .sidebar-panels {
+      width: 100%;
+      right: unset;
+    }
   }
 }
-/* Sidebar styles */
+</style>
+<style>
 .right-sidebar {
   position: relative;
   width: 64px;
   min-width: 64px;
   max-width: 340px;
+  height: 100%;
   display: flex;
   flex-direction: row;
   align-items: stretch;
@@ -1265,7 +1317,7 @@ select:hover, button:hover { background: #555; }
   position: absolute;
   left: 0;
   top: 0;
-  height: 100dvh;
+  height: 100%;
   width: 64px;
   display: flex;
   flex-direction: column;
@@ -1303,8 +1355,8 @@ select:hover, button:hover { background: #555; }
   position: absolute;
   top: 0;
   left: 64px;
- 
   width: 340px;
+  height: 100%;
   background: #232323;
   box-shadow: -2px 0 8px rgba(0,0,0,0.10);
   display: flex;
@@ -1314,21 +1366,16 @@ select:hover, button:hover { background: #555; }
 .right-sidebar .sidebar-panel {
   display: flex;
   flex-direction: column;
-  height: 100dvh;
+  height: 100%;
   min-height: 0;
   padding: 24px 18px 18px 18px;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .right-sidebar .clear-panel {
   padding-top: 0;
   background: none;
   box-shadow: none;
-}
-@media (max-width: 700px) {
-  .right-sidebar .sidebar-panels {
-    width: 95vw;
-    right: 56px;
-  }
 }
 .time-slide-inputs{
   display: flex;
@@ -1344,7 +1391,6 @@ select:hover, button:hover { background: #555; }
   color: white;
   font-size: 13px;
 }
-/* Bible selector group for spacing */
 .bible-selector-group > * {
   margin-bottom: 10px;
 }
@@ -1357,7 +1403,6 @@ select:hover, button:hover { background: #555; }
   margin-top: 2px;
   margin-bottom: 6px;
 }
-/* Uniform number button sizing for chapters/verses and grid layout */
 .bible-grid {
   display: flex;
   flex-wrap: wrap;
@@ -1386,52 +1431,52 @@ select:hover, button:hover { background: #555; }
 .verse-btn.active {
   background: #777;
 }
-.clear-panel{
-height: 75px;
-margin: 8px;
+.clear-panel {
+  height: 75px;
+  margin: 8px;
 }
 
-@media (max-width: 480px) {
-  .presenter-layout {
-    flex-direction: column;
-    padding: 4px 0;
-  }
+/* ---- Mobile portrait: stack vertically, sidebar becomes bottom strip ---- */
+@media (max-width: 768px) and (orientation: portrait), (max-width: 600px) {
   .right-sidebar {
-    width: 100vw;
-    min-width: 0;
-    border-radius: 0 0 8px 8px;
-    margin-bottom: 8px;
-    padding: 8px 2px;
-    position: static;
-    max-width: unset;
-  }
-  .presenter-area {
-    width: 100vw;
-    min-width: 0;
-    padding: 0 2px;
-    height: auto;
+    width: 100%;
+    height: 55%;
     min-height: 0;
+    max-width: unset;
+    flex-direction: column-reverse;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.15);
   }
-  .text-display {
-    font-size: 1em;
-    min-width: 0;
-    width: 98vw;
-    max-width: 100vw;
-    border-radius: 8px;
-    padding: 8px 2px;
+  .right-sidebar .sidebar-icons {
+    position: relative;
+    width: 100%;
+    height: 52px;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 8px;
+    gap: 0;
+    border-top: 1px solid #333;
+    box-shadow: none;
+    flex-shrink: 0;
   }
   .right-sidebar .sidebar-panels {
-    width: 100vw;
-    left: 0;
+    position: relative;
+    left: unset;
     top: unset;
-    position: static;
+    width: 100%;
+    height: unset;
+    flex: 1;
+    min-height: 0;
     box-shadow: none;
-    padding: 0 2px;
   }
   .right-sidebar .sidebar-panel {
+    height: 100%;
+    padding: 10px 12px 8px;
+    overflow-y: auto;
+  }
+  .right-sidebar .clear-panel {
     height: auto;
-    min-height: 0;
-    padding: 12px 4px 8px 4px;
+    margin: 4px 8px;
   }
 }
 </style>
