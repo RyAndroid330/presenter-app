@@ -132,7 +132,7 @@ onUnmounted(() => {
   /* Diagonal gradient overlay on Bible.jpg background */
   background:
     linear-gradient(135deg, rgba(24,24,24,0.95) 0%, rgba(24,24,24,0.7) 60%, rgba(24,24,24,0.2) 85%, rgba(24,24,24,0.0) 100%),
-    url('/Bible.jpg') no-repeat left bottom/cover;
+    url('/public/Bible.jpg') no-repeat left bottom/cover;
   background-blend-mode: normal;
 }
 .sidebar {
