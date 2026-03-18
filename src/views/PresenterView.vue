@@ -754,21 +754,29 @@ async function onSessionChange() {
   try {
     const res = await fetch('/api/setlists/' + selectedSessionId.value)
     const s = await res.json()
-    // Enrich sessionSongs with XML metadata if available
+    // Enrich sessionSongs with XML/DB metadata if available
     sessionSongs.value = (s.songs || []).map(song => {
-      // Try to find a matching XML song by id or filename
-      let xml = null;
+      let enriched = { ...song };
+      // Try DB song first
+      let dbSong = null;
       if (Array.isArray(allSongs?.value)) {
-        xml = allSongs.value.find(x => x.id === song.song_id || x.filename === song.song_id)
+        dbSong = allSongs.value.find(x => x.id === song.song_id || x.filename === song.song_id);
       }
-      if (!xml && Array.isArray(xmlSongs?.value)) {
-        xml = xmlSongs.value.find(x => x.id === song.song_id || x.filename === song.song_id)
+      if (dbSong) {
+        enriched.language = dbSong.language || enriched.language;
+        enriched.filename = dbSong.filename || enriched.filename;
       }
-      if (xml && xml.language && xml.filename) {
-        return { ...song, language: xml.language, filename: xml.filename };
+      // Try XML song if DB not found or missing info
+      let xmlSong = null;
+      if (Array.isArray(xmlSongs?.value)) {
+        xmlSong = xmlSongs.value.find(x => x.id === song.song_id || x.filename === song.song_id);
       }
-      return song;
-    })
+      if (xmlSong) {
+        enriched.language = xmlSong.language || enriched.language;
+        enriched.filename = xmlSong.filename || enriched.filename;
+      }
+      return enriched;
+    });
   } catch (e) { console.error(e) }
 }
 
