@@ -828,7 +828,7 @@ select:hover, input:hover, button:hover { background: #555; }
   width: 100%;
   flex: 1 1 auto;
   min-height: 80px;
-  max-height: 100%;
+  max-height: 90%;
   background: rgba(255,255,255,0.05);
   border-radius: 12px;
   padding: 20px;
