@@ -20,9 +20,6 @@
         <button :class="{active: openPanel==='timer'}" @click="togglePanel('timer')" title="Timer Tool">
           <span class="icon material-icons">timer</span>
         </button>
-        <button class="back-btn" @click="$router.push('/')" title="Home">
-          <span class="icon material-icons">arrow_back</span>
-        </button>
       </div>
       <div class="sidebar-panels">
         <div v-show="openPanel==='main'" class="sidebar-panel">
@@ -958,18 +955,11 @@ onUnmounted(() => {
   word-break: break-word;
   line-height: 1.1;
   color: white;
-  /* Cap the font so it doesn't take over the whole screen */
-  font-size: clamp(14px, 3vw, 48px);
 }
 
+/* legacy .sidebar not used in presenter but keep it safe */
 .sidebar {
-  width: 20dvw;
-  height: 100%;
-  padding: 15px;
-  border-left: 1px solid #444;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
+  display: none;
 }
 
 .time-slide-btn {
@@ -1218,129 +1208,148 @@ select:hover, button:hover { background: #555; }
 }
 .meeting-delete-btn:hover { color: #ff6666; background: rgba(255,100,100,0.15); }
 
-/* Sidebar styles */
+/* ── Right sidebar: icon strip + slide-out panel ── */
 .right-sidebar {
   position: relative;
-  width: 64px;
-  min-width: 64px;
-  max-width: 340px;
+  flex-shrink: 0;
+  width: 56px;
   height: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  background: #232323;
-  box-shadow: -2px 0 8px rgba(0,0,0,0.08);
-  z-index: 10;
-  transition: width 0.2s cubic-bezier(.4,0,.2,1);
-}
-.right-sidebar .sidebar-icons {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 64px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 18px 0;
-  align-items: center;
-  z-index: 12;
   background: #232323;
-  box-shadow: -2px 0 8px rgba(0,0,0,0.08);
+  box-shadow: -2px 0 8px rgba(0,0,0,0.15);
+  z-index: 20;
 }
+
+/* Vertical icon strip */
+.right-sidebar .sidebar-icons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0;
+  width: 56px;
+  height: 100%;
+  z-index: 22;
+  background: #232323;
+}
+
 .right-sidebar .sidebar-icons button {
   background: none;
   border: none;
-  color: white;
+  color: #ccc;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   border-radius: 10px;
   cursor: pointer;
-  transition: background 0.15s;
-  font-size: 26px;
-  margin: 0 auto;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
 }
-.right-sidebar .sidebar-icons button.active,
-.right-sidebar .sidebar-icons button:hover { background: #444; }
-.right-sidebar .icon { font-size: 28px; color: #ccc; }
+.right-sidebar .sidebar-icons button:hover { background: #3a3a3a; color: #fff; }
+.right-sidebar .sidebar-icons button.active {
+  background: rgba(79,195,247,0.15);
+  color: var(--accent-color, #4fc3f7);
+}
+.right-sidebar .icon { font-size: 24px; }
+
+/* Panel flies out to the LEFT of the icon strip */
 .right-sidebar .sidebar-panels {
   position: absolute;
   top: 0;
-  left: 64px;
-  width: 340px;
+  right: 56px;      /* anchored to left edge of icon strip */
+  width: 300px;
   height: 100%;
-  background: #232323;
-  box-shadow: -2px 0 8px rgba(0,0,0,0.10);
+  background: #1e1e1e;
+  box-shadow: -4px 0 16px rgba(0,0,0,0.3);
   display: flex;
   flex-direction: column;
-  z-index: 11;
+  z-index: 21;
+  border-right: 1px solid #333;
 }
+
 .right-sidebar .sidebar-panel {
   display: flex;
   flex-direction: column;
   height: 100%;
   min-height: 0;
-  padding: 16px 14px 14px 14px;
+  padding: 16px 14px 14px;
   overflow-y: auto;
   overflow-x: hidden;
 }
+
 .right-sidebar .clear-panel {
-  padding-top: 0;
+  height: auto;
+  padding: 10px 14px;
   background: none;
   box-shadow: none;
-  height: auto;
-  margin: 8px;
+  border-top: 1px solid #333;
+  margin-top: auto;
+  flex-shrink: 0;
 }
 
-/* Mobile portrait: stack vertically, icons become horizontal bottom bar */
+/* ── Mobile portrait: stack, icons become bottom bar ── */
 @media (max-width: 768px) and (orientation: portrait), (max-width: 500px) {
   .presenter-layout { flex-direction: column; }
+
   .presenter-area {
+    width: 100%;
     height: 42%;
-    flex: none;
     flex-shrink: 0;
+    flex: none;
     padding: 8px;
+    overflow: hidden;
   }
-  .text-display { border-radius: 8px; padding: 10px; font-size: clamp(14px, 4vw, 32px); }
+  .text-display { padding: 10px; border-radius: 8px; }
+
   .right-sidebar {
     width: 100%;
     height: 58%;
     flex-shrink: 0;
-    max-width: unset;
-    flex-direction: column-reverse;
-    box-shadow: 0 -2px 8px rgba(0,0,0,0.15);
+    flex-direction: column-reverse;  /* icons at bottom */
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.2);
   }
+
+  /* Horizontal icon bar across the bottom */
   .right-sidebar .sidebar-icons {
-    position: relative;
     width: 100%;
-    height: 52px;
-    flex-shrink: 0;
+    height: 50px;
     flex-direction: row;
     justify-content: space-around;
-    align-items: center;
     padding: 0 8px;
     gap: 0;
     border-top: 1px solid #333;
-    box-shadow: none;
+    flex-shrink: 0;
   }
+
+  /* Panel fills space above the icon bar */
   .right-sidebar .sidebar-panels {
     position: relative;
-    left: unset; top: unset;
+    right: unset;
+    top: unset;
     width: 100%;
     height: unset;
     flex: 1;
     min-height: 0;
     box-shadow: none;
+    border-right: none;
+    border-bottom: 1px solid #333;
   }
+
   .right-sidebar .sidebar-panel {
     height: 100%;
-    padding: 8px 12px 6px;
-    overflow-y: auto;
+    padding: 10px 12px 6px;
+  }
+
+  .right-sidebar .clear-panel {
+    margin-top: 0;
+    border-top: none;
+    padding: 6px 12px;
   }
 }
+
 .time-slide-inputs{
   display: flex;
   gap: 6px;
@@ -1398,7 +1407,7 @@ select:hover, button:hover { background: #555; }
   background: #777;
 }
 .clear-panel {
-  height: auto !important;
+  height: auto;
   margin: 8px;
 }
 </style>
