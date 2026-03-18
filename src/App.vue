@@ -1,139 +1,322 @@
 <template>
-  <div class="app-root">
+  <div>
     <header class="app-header">
       <nav class="main-nav">
-        <button @click="router.push('/')"              class="nav-btn" :class="{ active: route.path === '/' }">Home</button>
-        <button @click="restrictedNav('/presenter')"   class="nav-btn" :class="{ active: route.path === '/presenter' }">Slides</button>
-        <button @click="restrictedNav('/teacher')"     class="nav-btn" :class="{ active: route.path === '/teacher' }">Teacher</button>
-        <button @click="restrictedNav('/musician')"    class="nav-btn" :class="{ active: route.path === '/musician' }">Musician</button>
-        <button @click="router.push('/viewer')"        class="nav-btn" :class="{ active: route.path === '/viewer' }">Viewer</button>
+        <button @click="router.push('/')" class="nav-btn" :class="{ active: route.path === '/' }">Home</button>
+        <button @click="restrictedNav('/presenter')" class="nav-btn" :class="{ active: route.path === '/presenter' }">Slides</button>
+        <button @click="restrictedNav('/teacher')" class="nav-btn" :class="{ active: route.path === '/teacher' }">Teacher</button>
+        <button @click="restrictedNav('/musician')" class="nav-btn" :class="{ active: route.path === '/musician' }">Musician</button>
+        <button @click="openViewerDialog" class="nav-btn" :class="{ active: route.path === '/viewer' }">Viewer</button>
       </nav>
       <div class="user-info">
         <template v-if="user">
-          <img v-if="user.picture || user.photos"
-               :src="user.picture || user.photos?.[0]?.value"
-               class="user-avatar hide-mobile" />
-          <span class="user-name hide-mobile">{{
-            user.displayName ||
-            (user.name?.givenName ? (user.name.givenName + ' ' + (user.name.familyName || '')).trim() : null) ||
-            (user.emails && user.emails[0] && user.emails[0].value) || 'User'
-          }}</span>
-          <button @click="logout" class="auth-btn">Logout</button>
+          <img v-if="user.picture || user.photos" :src="user.picture || (user.photos && user.photos[0] && user.photos[0].value)" class="user-avatar" />
+          <span>
+            {{
+              user.displayName ||
+              user.name?.givenName + ' ' + user.name?.familyName ||
+              user.name?.familyName ||
+              user.name?.givenName ||
+              user.email ||
+              (user.emails && user.emails[0] && user.emails[0].value) ||
+              'User'
+            }}
+          </span>
+          <button @click="logout" class="logout-btn">Logout</button>
         </template>
         <template v-else>
-          <button @click="login" class="auth-btn">Login</button>
+          <button @click="login" class="login-btn">Login with Google</button>
         </template>
       </div>
     </header>
-    <main class="view-slot">
-      <router-view />
-    </main>
+    <!-- Sidebar is now rendered directly in each view, not via slot. -->
+    <router-view />
+
+    <!-- Viewer meeting picker dialog -->
+    <dialog ref="viewerDialogRef" class="viewer-dialog" @close="onDialogClose">
+      <h2 class="dialog-title">Join a Meeting</h2>
+      <div v-if="meetings.length" class="meeting-picker">
+        <div
+          v-for="m in meetings"
+          :key="m.id"
+          class="meeting-option"
+          :class="{ selected: selectedMeeting === m.name }"
+          @click="selectedMeeting = m.name"
+        >
+          <span class="meeting-option-name">{{ m.name }}</span>
+          <span v-if="selectedMeeting === m.name" class="meeting-check">✓</span>
+        </div>
+      </div>
+      <p v-else class="no-meetings">No active meetings right now.</p>
+      <div class="dialog-actions">
+        <button class="dialog-cancel" @click="viewerDialogRef.close()">Cancel</button>
+        <button class="dialog-join" :disabled="!selectedMeeting" @click="joinMeeting">Join</button>
+      </div>
+    </dialog>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-
-const router = useRouter()
-const route  = useRoute()
-const user   = ref(null)
-
+// Navigation logic for navbar
 function restrictedNav(path) {
-  if (!user.value) { window.location.href = '/auth/google'; return }
+  if (!user.value) {
+    window.location.href = '/auth/google'
+    return
+  }
   router.push(path)
 }
-function login()  { window.location.href = '/auth/google' }
-function logout() { window.location.href = '/logout' }
+
+import { ref, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+const user = ref(null)
+const router = useRouter()
+const route = useRoute()
+
+// ── Viewer dialog ──
+const viewerDialogRef = ref(null)
+const meetings = ref([])
+const selectedMeeting = ref('')
+let pollInterval = null
+
+async function loadMeetings() {
+  try {
+    const res = await fetch('/api/meetings')
+    meetings.value = await res.json()
+    // Auto-select first if nothing selected or previous selection gone
+    if (!meetings.value.find(m => m.name === selectedMeeting.value)) {
+      selectedMeeting.value = meetings.value[0]?.name || ''
+    }
+  } catch (e) { console.error(e) }
+}
+
+function openViewerDialog() {
+  selectedMeeting.value = ''
+  loadMeetings()
+  pollInterval = setInterval(loadMeetings, 2000)
+  viewerDialogRef.value.showModal()
+}
+
+function onDialogClose() {
+  clearInterval(pollInterval)
+  pollInterval = null
+}
+
+function joinMeeting() {
+  if (!selectedMeeting.value) return
+  viewerDialogRef.value.close()
+  router.push({ path: '/viewer', query: { meet: selectedMeeting.value } })
+}
 
 async function fetchUser() {
   try {
     const res = await fetch('/api/user')
-    user.value = res.ok ? (await res.json()).user : null
-  } catch { user.value = null }
+    if (res.ok) {
+      const data = await res.json()
+      user.value = data.user
+    } else {
+      user.value = null
+    }
+  } catch {
+    user.value = null
+  }
+}
+
+function login() {
+  window.location.href = '/auth/google'
+}
+
+function logout() {
+  window.location.href = '/logout'
 }
 
 onMounted(fetchUser)
-router.afterEach(fetchUser)
+
+router.afterEach(() => {
+  fetchUser()
+})
 </script>
 
 <style>
-.app-root {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
+html, body, #app {
+  margin: 0;
+  padding: 0;
+  width: 100dvw;
+  height: 100dvh;
   overflow: hidden;
-  background: var(--bg-raised);
-  color: var(--text-primary);
+  background: #2f2f2f;
 }
 
 .app-header {
-  flex-shrink: 0;
-  height: var(--nav-h);
+  width: 100%;
+  background: #232323;
+  color: #fff;
+  padding: 8px 20px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
-  background: var(--bg-surface);
-  border-bottom: 1px solid var(--border);
-  z-index: 100;
+  align-items: center;
+  box-sizing: border-box;
 }
-
-.view-slot {
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
+.main-nav {
   display: flex;
-  flex-direction: column;
+  gap: 16px;
 }
-
-.main-nav { display: flex; gap: 2px; }
-
 .nav-btn {
-  position: relative;
   background: none;
   border: none;
-  color: var(--text-muted);
-  font-size: 0.9em;
-  font-weight: 500;
-  padding: 5px 12px;
-  border-radius: var(--radius);
+  color: #aaa;
+  font-size: 1em;
+  padding: 6px 14px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background var(--transition), color var(--transition);
-  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+  font-weight: 500;
+  position: relative;
 }
 .nav-btn::after {
   content: '';
+  display: block;
   position: absolute;
-  bottom: -1px;
-  left: 12px;
-  right: 12px;
+  bottom: -2px;
+  left: 14px;
+  right: 14px;
   height: 2px;
   border-radius: 2px;
-  background: var(--accent);
+  background: var(--accent-color, #4fc3f7);
   transform: scaleX(0);
-  transition: transform var(--transition);
+  transition: transform 0.15s;
 }
-.nav-btn:hover, .nav-btn.active { background: var(--accent-dim); color: var(--accent); }
-.nav-btn:hover::after, .nav-btn.active::after { transform: scaleX(1); }
-
-.user-info { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-.user-avatar { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
-.user-name { font-size: 0.85em; color: var(--text-muted); max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.auth-btn {
-  background: var(--bg-active);
-  color: var(--text-primary);
+.nav-btn:hover {
+  background: rgba(79, 195, 247, 0.08);
+  color: var(--accent-color, #4fc3f7);
+}
+.nav-btn:hover::after {
+  transform: scaleX(1);
+}
+.nav-btn.active {
+  color: var(--accent-color, #4fc3f7);
+  background: rgba(79, 195, 247, 0.12);
+}
+.nav-btn.active::after {
+  transform: scaleX(1);
+}
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.login-btn, .logout-btn {
+  background: #444;
+  color: #fff;
   border: none;
-  border-radius: var(--radius);
-  padding: 5px 14px;
-  font-size: 0.85em;
+  border-radius: 8px;
+  padding: 6px 16px;
+  font-size: 16px;
   cursor: pointer;
 }
-.auth-btn:hover { background: #555; }
-
-@media (max-width: 600px) {
-  .app-header { padding: 0 8px; }
-  .nav-btn { font-size: 0.78em; padding: 4px 7px; }
+.login-btn:hover, .logout-btn:hover {
+  background: #666;
 }
+
+@media (max-width: 768px) {
+  html, body, #app {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .app-header {
+    padding: 8px 8px;
+  }
+}
+
+/* ── Viewer meeting picker dialog ── */
+.viewer-dialog {
+  background: var(--bg-surface, #232323);
+  color: var(--text-primary, #e0e0e0);
+  border: 1px solid var(--border, #333);
+  border-radius: 16px;
+  padding: 0;
+  width: min(400px, 92vw);
+  box-shadow: 0 12px 48px rgba(0,0,0,0.6);
+  overflow: hidden;
+}
+.viewer-dialog::backdrop {
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(3px);
+}
+.dialog-title {
+  margin: 0;
+  padding: 20px 20px 16px;
+  font-size: 17px;
+  font-weight: 700;
+  border-bottom: 1px solid var(--border, #333);
+}
+.meeting-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+.meeting-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background 0.12s;
+  background: var(--bg-hover, #3a3a3a);
+}
+.meeting-option:hover { background: var(--bg-active, #444); }
+.meeting-option.selected {
+  background: var(--accent-dim, rgba(29,185,84,0.12));
+  color: var(--accent, #1db954);
+}
+.meeting-option-name { font-weight: 500; }
+.meeting-check { font-size: 16px; color: var(--accent, #1db954); }
+
+.no-meetings {
+  padding: 24px 20px;
+  text-align: center;
+  color: var(--text-faint, #666);
+  font-style: italic;
+  font-size: 14px;
+}
+.dialog-actions {
+  display: flex;
+  gap: 10px;
+  padding: 14px 16px;
+  border-top: 1px solid var(--border, #333);
+  justify-content: flex-end;
+}
+.dialog-cancel {
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: none;
+  background: var(--bg-active, #444);
+  color: var(--text-primary, #e0e0e0);
+  font-size: 14px;
+  cursor: pointer;
+}
+.dialog-cancel:hover { background: #555; }
+.dialog-join {
+  padding: 8px 22px;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent, #1db954);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.dialog-join:hover   { background: var(--accent-hover, #1ed760); }
+.dialog-join:disabled { opacity: 0.35; cursor: default; }
 </style>
