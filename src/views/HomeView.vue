@@ -1,7 +1,7 @@
 <template>
   <!-- Mac Dark Mode meets Spotify styling -->
   <div class="home-layout">
-    <template #sidebar>
+    <aside class="sidebar" :class="{ expanded: sidebarHover }" @mouseenter="sidebarHover = true" @mouseleave="sidebarHover = false">
       <div class="sidebar-buttons sidebar-top">
         <button @click="restrictedNav('/presenter')">
           <span class="icon material-icons">slideshow</span>
@@ -20,7 +20,7 @@
           <span class="label">Viewer</span>
         </button>
       </div>
-    </template>
+    </aside>
     <main class="main-content">
       <h1>Welcome to StudyLink</h1>
       <p class="welcome-msg">Your meeting, on every screen.</p>

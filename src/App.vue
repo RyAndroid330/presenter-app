@@ -23,11 +23,7 @@
         </template>
       </div>
     </header>
-    <template v-if="!isViewerPage">
-      <aside class="sidebar-app">
-        <slot name="sidebar"></slot>
-      </aside>
-    </template>
+    <!-- Sidebar is now rendered directly in each view, not via slot. -->
     <router-view />
   </div>
 </template>
