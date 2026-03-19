@@ -867,6 +867,7 @@ onUnmounted(() => {
 /* ── Layout ── */
 .presenter-layout {
   display: flex;
+  flex-direction: row;
   height: 100%;
   width: 100%;
   overflow: hidden;
@@ -876,7 +877,7 @@ onUnmounted(() => {
 }
 
 .presenter-area {
-  flex: 1;
+  flex: 1 1 0;
   min-width: 0;
   height: 100%;
   display: flex;
@@ -907,8 +908,8 @@ onUnmounted(() => {
 
 /* ── Right sidebar: icon strip + fly-out panel ── */
 .right-sidebar {
-  flex-shrink: 0;
-  width: 52px;
+  flex: 0 0 52px;
+  min-width: 0;
   height: 100%;
   position: relative;
   display: flex;
