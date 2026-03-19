@@ -256,8 +256,8 @@ onUnmounted(() => {
   border-radius: 50%;
   border: none;
   /* Inverted: accent background, dark symbol */
-  background: var(--accent);
-  color: var(--bg-base, #181818);
+  background: var(--bg-base, #181818);
+  color: var(--accent);
   font-size: 26px;
   cursor: pointer;
   z-index: 100;

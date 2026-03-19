@@ -879,6 +879,7 @@ onUnmounted(() => {
 .presenter-area {
   flex: 1 1 0;
   min-width: 0;
+  width: 75dvw;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -910,6 +911,7 @@ onUnmounted(() => {
 .right-sidebar {
   flex: 0 0 52px;
   min-width: 0;
+  width: 25dvw;
   height: 100%;
   position: relative;
   display: flex;
