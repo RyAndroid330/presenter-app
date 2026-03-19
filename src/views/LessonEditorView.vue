@@ -635,6 +635,7 @@ onUnmounted(() => {
 /* ── Layout ── */
 .editor-layout {
   display: flex;
+  flex-direction: row;    /* explicit — sidebar right, main left */
   height: 100%;
   width: 100%;
   overflow: hidden;
@@ -645,7 +646,7 @@ onUnmounted(() => {
 
 /* Left: editor + sticky save bar */
 .main-area {
-  flex: 1;
+  flex: 1 1 0;            /* grow, shrink, base 0 — never pushes sidebar off */
   min-width: 0;
   height: 100%;
   display: flex;
@@ -695,15 +696,14 @@ onUnmounted(() => {
 
 /* ── Right sidebar ── */
 .sidebar {
-  width: 300px;
-  min-width: 200px;
-  flex-shrink: 0;
+  flex: 0 0 280px;        /* don't grow, don't shrink, exactly 280px */
+  min-width: 0;
   height: 100%;
   display: flex;
   flex-direction: column;
   border-left: 1px solid var(--border-light);
   background: var(--bg-surface);
-  overflow: hidden;         /* critical — clips children */
+  overflow: hidden;
 }
 
 /* Sticky top buttons — never scroll away */
