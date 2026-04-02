@@ -231,6 +231,10 @@
               <p class="qr-hint">Scan to join <strong>{{ meetingName }}</strong></p>
               <img v-if="qrDataUrl" :src="qrDataUrl" class="qr-img" alt="Meeting QR Code" />
               <button class="quick-add-btn" @click="showQrOverlay = true">Show on Screen</button>
+              <button class="quick-add-btn qr-cast-btn" @click="broadcastQr" :disabled="qrBroadcastActive">
+                {{ qrBroadcastActive ? 'QR Live on All Screens' : 'Broadcast QR to All Screens' }}
+              </button>
+              <button v-if="qrBroadcastActive" class="clear-btn" style="margin-top:0" @click="clearQrBroadcast">Stop QR Broadcast</button>
             </template>
           </div>
         </div>
@@ -747,7 +751,30 @@ async function generateQr(name) {
   qrDataUrl.value = await QRCode.toDataURL(url, { width: 280, margin: 2, color: { dark: '#ffffff', light: '#1e1e1e' } })
 }
 
-watch(meetingName, (name) => generateQr(name))
+watch(meetingName, (name) => { generateQr(name); qrBroadcastActive.value = false })
+
+const qrBroadcastActive = ref(false)
+
+async function broadcastQr() {
+  if (!meetingName.value.trim()) return
+  await ensureMeeting()
+  await fetch('/api/presenter?meet=' + encodeURIComponent(meetingName.value), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text: '', chords: null, qr: qrJoinUrl.value })
+  })
+  qrBroadcastActive.value = true
+}
+
+async function clearQrBroadcast() {
+  if (!meetingName.value.trim()) return
+  await fetch('/api/presenter?meet=' + encodeURIComponent(meetingName.value), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text: '', chords: null, qr: null })
+  })
+  qrBroadcastActive.value = false
+}
 
 /* --- Cast (Web Presentation API) --- */
 const castConnections = ref([])
@@ -848,10 +875,11 @@ async function broadcast(text, chords) {
     return
   }
   await ensureMeeting()
+  qrBroadcastActive.value = false
   await fetch('/api/presenter?meet=' + encodeURIComponent(meetingName.value), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text, chords: chords || null })
+    body: JSON.stringify({ text, chords: chords || null, qr: null })
   })
 }
 
@@ -1260,6 +1288,9 @@ select option { background: var(--bg-surface); }
 
 /* ── QR Code ── */
 .qr-hint { font-size: 12px; color: var(--text-muted); margin: 0; line-height: 1.4; }
+.qr-cast-btn { background: #2a6a8a; }
+.qr-cast-btn:hover { background: #3a8aba; }
+.qr-cast-btn:disabled { background: #1a4a5a; opacity: 0.8; cursor: default; }
 .qr-img { width: 100%; border-radius: var(--radius); display: block; }
 
 .qr-overlay {

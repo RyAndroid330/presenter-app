@@ -21,6 +21,11 @@
       </template>
     </div>
 
+    <div v-if="qrDataUrl" class="viewer-qr-overlay">
+      <img :src="qrDataUrl" class="viewer-qr-img" alt="Join QR Code" />
+      <p class="viewer-qr-label">Scan to join · share with others</p>
+    </div>
+
     <button class="chord-toggle" :class="{ active: showChords }" @click="toggleChords">&#9834;</button>
     </template>
   </div>
@@ -28,6 +33,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import QRCode from 'qrcode'
 import { useRoute, useRouter } from 'vue-router'
 import { createFitText } from '../composables/useFitText.js'
 
@@ -45,6 +51,7 @@ const displayRef = ref(null)
 const displayText = ref('')
 const currentChords = ref(null)
 const showChords = ref(false)
+const qrDataUrl = ref('')
 
 /* --- Landscape enforcement (mobile only) --- */
 const showRotatePrompt = ref(false)
@@ -196,8 +203,13 @@ onMounted(() => {
 
   eventSource = new EventSource('/api/events?meet=' + encodeURIComponent(meeting))
 
-  eventSource.onmessage = (event) => {
+  eventSource.onmessage = async (event) => {
     const data = JSON.parse(event.data)
+    if (data.qr) {
+      qrDataUrl.value = await QRCode.toDataURL(data.qr, { width: 400, margin: 2, color: { dark: '#ffffff', light: '#1a1a1a' } })
+    } else {
+      qrDataUrl.value = ''
+    }
     displayText.value = data.text
     currentChords.value = data.chords || null
     if (!showChords.value || !data.chords) {
@@ -307,6 +319,29 @@ onUnmounted(() => {
 .chord-toggle:hover    { background: var(--accent-hover); transform: scale(1.08); }
 /* Active = currently showing chords: slightly different shade to show state */
 .chord-toggle.active   { background: var(--accent-hover); box-shadow: 0 4px 20px rgba(29,185,84,0.4); }
+
+/* ── Viewer QR overlay ── */
+.viewer-qr-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  background: var(--bg-raised);
+  z-index: 10;
+}
+.viewer-qr-img {
+  width: min(70vw, 70vh);
+  height: min(70vw, 70vh);
+  border-radius: 12px;
+}
+.viewer-qr-label {
+  font-size: clamp(14px, 2.5vw, 22px);
+  color: var(--text-muted);
+  margin: 0;
+}
 
 /* ── Rotate prompt ── */
 .rotate-prompt {

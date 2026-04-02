@@ -381,7 +381,7 @@ app.get("/api/events", (req, res) => {
   liveMeetings[meetName].clients.push(res);
 
   // send current text immediately
-  res.write(`data: ${JSON.stringify({ text: liveMeetings[meetName].text, chords: liveMeetings[meetName].chords || null })}\n\n`);
+  res.write(`data: ${JSON.stringify({ text: liveMeetings[meetName].text, chords: liveMeetings[meetName].chords || null, qr: liveMeetings[meetName].qr || null })}\n\n`);
 
   req.on("close", () => {
     liveMeetings[meetName].clients = liveMeetings[meetName].clients.filter(c => c !== res);
@@ -396,6 +396,7 @@ app.post("/api/presenter", (req, res) => {
   if (!name) return res.status(400).json({ error: "Missing meeting name" });
   const text = req.body.text || "";
   const chords = req.body.chords || null;
+  const qr = req.body.qr || null;
   if (!liveMeetings[name]) liveMeetings[name] = { text: "Welcome", clients: [] };
 
   // Timer logic: detect and start/stop timer
@@ -420,10 +421,11 @@ app.post("/api/presenter", (req, res) => {
 
   liveMeetings[name].text = text;
   liveMeetings[name].chords = chords;
+  liveMeetings[name].qr = qr;
   // Broadcast to all SSE clients
   if (liveMeetings[name].clients) {
     for (const res of liveMeetings[name].clients) {
-      res.write(`data: ${JSON.stringify({ text, chords })}\n\n`);
+      res.write(`data: ${JSON.stringify({ text, chords, qr })}\n\n`);
     }
   }
   res.json({ status: "ok" });
