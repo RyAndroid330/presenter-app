@@ -2,6 +2,15 @@
   <div class="presenter-layout">
     <div class="presenter-area">
       <div ref="textInputRef" class="text-display"></div>
+      <!-- QR fullscreen overlay -->
+      <div v-if="showQrOverlay" class="qr-overlay" @click="showQrOverlay = false">
+        <div class="qr-overlay-inner" @click.stop>
+          <p class="qr-overlay-label">Scan to join <strong>{{ meetingName }}</strong></p>
+          <img :src="qrDataUrl" class="qr-overlay-img" alt="Meeting QR Code" />
+          <p class="qr-overlay-url">{{ qrJoinUrl }}</p>
+          <button class="qr-overlay-close" @click="showQrOverlay = false">Dismiss</button>
+        </div>
+      </div>
     </div>
     <div class="right-sidebar" :class="{ 'panel-open': openPanel }">
       <div class="sidebar-icons sidebar-top">
@@ -19,6 +28,9 @@
         </button>
         <button :class="{active: openPanel==='timer'}" @click="togglePanel('timer')" title="Timer Tool">
           <span class="icon material-icons">timer</span>
+        </button>
+        <button :class="{active: openPanel==='qr'}" @click="togglePanel('qr')" title="Meeting QR Code">
+          <span class="icon material-icons">qr_code_2</span>
         </button>
         <button class="back-btn" @click="$router.push('/')" title="Home">
           <span class="icon material-icons">arrow_back</span>
@@ -207,6 +219,18 @@
             <button class="time-slide-btn" @click="resetTimer">Reset</button>
           </div>
         </div>
+        <div v-show="openPanel==='qr'" class="sidebar-panel">
+          <!-- QR Code Panel -->
+          <div class="section-header"><span>Meeting QR Code</span></div>
+          <div class="quick-add-block">
+            <p v-if="!meetingName.trim()" class="qr-hint">Select a meeting to generate a QR code.</p>
+            <template v-else>
+              <p class="qr-hint">Scan to join <strong>{{ meetingName }}</strong></p>
+              <img v-if="qrDataUrl" :src="qrDataUrl" class="qr-img" alt="Meeting QR Code" />
+              <button class="quick-add-btn" @click="showQrOverlay = true">Show on Screen</button>
+            </template>
+          </div>
+        </div>
         <div v-show="openPanel" class="sidebar-panel clear-panel">
           <button class="clear-btn" @click="clearSlide">Blank Slide</button>
         </div>
@@ -217,9 +241,10 @@
   </template>
 
 <script setup>
-import { computed, ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { computed, ref, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { createFitText } from '../composables/useFitText.js'
+import QRCode from 'qrcode'
 
 // --- Sidebar panel state ---
 const openPanel = ref('main')
@@ -687,6 +712,20 @@ const meetingName = ref('')
 const meetings = ref([])
 let fitText = null
 
+/* --- QR Code --- */
+const qrDataUrl = ref('')
+const qrJoinUrl = ref('')
+const showQrOverlay = ref(false)
+
+async function generateQr(name) {
+  if (!name.trim()) { qrDataUrl.value = ''; qrJoinUrl.value = ''; return }
+  const url = window.location.origin + '/viewer?meet=' + encodeURIComponent(name)
+  qrJoinUrl.value = url
+  qrDataUrl.value = await QRCode.toDataURL(url, { width: 280, margin: 2, color: { dark: '#ffffff', light: '#1e1e1e' } })
+}
+
+watch(meetingName, (name) => generateQr(name))
+
 /* --- Active state --- */
 const activeType = ref(null)   // 'lesson' | 'section'
 const activeIdx = ref(null)
@@ -1148,6 +1187,47 @@ select option { background: var(--bg-surface); }
 .verse-label { font-size: 12px; color: var(--text-muted); }
 .bible-version-select { width: 100%; }
 .bible-selector-margin { margin-bottom: 4px; }
+
+/* ── QR Code ── */
+.qr-hint { font-size: 12px; color: var(--text-muted); margin: 0; line-height: 1.4; }
+.qr-img { width: 100%; border-radius: var(--radius); display: block; }
+
+.qr-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  border-radius: var(--radius-lg);
+}
+.qr-overlay-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 28px 32px;
+  background: var(--bg-surface);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+  max-width: 360px;
+  width: 90%;
+}
+.qr-overlay-label { font-size: 15px; color: var(--text-primary); margin: 0; text-align: center; }
+.qr-overlay-img { width: 240px; height: 240px; border-radius: var(--radius); display: block; }
+.qr-overlay-url { font-size: 11px; color: var(--text-faint); margin: 0; word-break: break-all; text-align: center; }
+.qr-overlay-close {
+  padding: 8px 24px;
+  border-radius: var(--radius);
+  border: none;
+  background: var(--bg-active);
+  color: var(--text-primary);
+  font-size: 13px;
+  cursor: pointer;
+}
+.qr-overlay-close:hover { background: #555; }
 
 /* ── Mobile portrait ── */
 @media (max-width: 768px) and (orientation: portrait), (max-width: 500px) {
