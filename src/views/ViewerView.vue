@@ -1,5 +1,12 @@
 <template>
   <div class="viewer">
+    <!-- Portrait prompt — shown on mobile when orientation lock fails -->
+    <div class="rotate-prompt" v-if="showRotatePrompt">
+      <span class="material-icons rotate-icon">screen_rotation</span>
+      <span>Rotate your device to landscape</span>
+    </div>
+
+    <template v-if="!showRotatePrompt">
     <div v-if="!displayText" class="waiting-message">
       Waiting for the meeting to start
     </div>
@@ -15,6 +22,7 @@
     </div>
 
     <button class="chord-toggle" :class="{ active: showChords }" @click="toggleChords">&#9834;</button>
+    </template>
   </div>
 </template>
 
@@ -37,6 +45,29 @@ const displayRef = ref(null)
 const displayText = ref('')
 const currentChords = ref(null)
 const showChords = ref(false)
+
+/* --- Landscape enforcement (mobile only) --- */
+const showRotatePrompt = ref(false)
+const isMobile = () => /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)
+
+function checkOrientation() {
+  if (!isMobile()) return
+  const portrait = window.matchMedia('(orientation: portrait)').matches
+  showRotatePrompt.value = portrait
+}
+
+async function lockLandscape() {
+  if (!isMobile()) return
+  try {
+    await screen.orientation.lock('landscape')
+    showRotatePrompt.value = false
+  } catch {
+    // Lock not supported — fall back to prompt
+    checkOrientation()
+    window.addEventListener('orientationchange', checkOrientation)
+    window.addEventListener('resize', checkOrientation)
+  }
+}
 
 
 let fitText = null
@@ -160,6 +191,7 @@ function toggleChords() {
 }
 
 onMounted(() => {
+  lockLandscape()
   fitText = createFitText(displayRef, 0)
 
   eventSource = new EventSource('/api/events?meet=' + encodeURIComponent(meeting))
@@ -190,6 +222,9 @@ onUnmounted(() => {
   document.removeEventListener('visibilitychange', handleVisibilityChange)
   if (wakeLock) { wakeLock.release(); wakeLock = null }
   disableNoSleepVideo()
+  window.removeEventListener('orientationchange', checkOrientation)
+  window.removeEventListener('resize', checkOrientation)
+  try { screen.orientation.unlock() } catch {}
 })
 </script>
 <style scoped>
@@ -272,6 +307,33 @@ onUnmounted(() => {
 .chord-toggle:hover    { background: var(--accent-hover); transform: scale(1.08); }
 /* Active = currently showing chords: slightly different shade to show state */
 .chord-toggle.active   { background: var(--accent-hover); box-shadow: 0 4px 20px rgba(29,185,84,0.4); }
+
+/* ── Rotate prompt ── */
+.rotate-prompt {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: var(--bg-raised);
+  color: var(--text-muted);
+  font-size: 1.1em;
+  z-index: 200;
+  text-align: center;
+  padding: 24px;
+}
+.rotate-icon {
+  font-size: 52px;
+  color: var(--accent);
+  animation: rotate-hint 2s ease-in-out infinite;
+}
+@keyframes rotate-hint {
+  0%, 100% { transform: rotate(0deg); }
+  40%       { transform: rotate(90deg); }
+  60%       { transform: rotate(90deg); }
+}
 
 /* ── Mobile ── */
 @media (max-width: 600px) {

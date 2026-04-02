@@ -10,6 +10,11 @@
       ></div>
       <div class="bottom-bar">
         <button class="save-btn" @click="saveSlide">Save Slide</button>
+        <div v-if="charWarning" class="char-warning" :class="'char-warning--' + charWarning">
+          <span class="material-icons char-warning-icon">{{ charWarning === 'error' ? 'error' : 'warning' }}</span>
+          <span v-if="charWarning === 'error'">Too much text — may be unreadable on small screens.</span>
+          <span v-else>Adding too much text to one slide may make it too small to read on other devices.</span>
+        </div>
       </div>
     </div>
 
@@ -313,11 +318,23 @@ async function saveSlidesToDB() {
   } catch (e) { console.error(e) }
 }
 
+/* --- Character count & warning --- */
+const CHAR_WARN  = 200
+const CHAR_LIMIT = 350
+const charCount  = ref(0)
+const charWarning = computed(() => {
+  if (charCount.value >= CHAR_LIMIT) return 'error'
+  if (charCount.value >= CHAR_WARN)  return 'warn'
+  return null
+})
+
 /* --- Text Fitting --- */
 function onTextInput() {
-  if (fitText) fitText.fit(textInputRef.value.innerText)
+  const text = textInputRef.value.innerText
+  charCount.value = text.length
+  if (fitText) fitText.fit(text)
   if (editingSlideIndex.value !== null) {
-    slides.value[editingSlideIndex.value] = textInputRef.value.innerText
+    slides.value[editingSlideIndex.value] = text
   }
 }
 
@@ -334,6 +351,7 @@ function openSlide(index) {
   editingSlideIndex.value = index
   const text = slides.value[index]
   textInputRef.value.innerText = text
+  charCount.value = text.length
   if (fitText) fitText.fit(text)
 }
 
@@ -680,7 +698,22 @@ onUnmounted(() => {
   flex-shrink: 0;
   padding-top: 10px;
   display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
+
+.char-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  line-height: 1.4;
+}
+.char-warning--warn  { background: rgba(180, 130, 0, 0.15); color: #c90; border: 1px solid rgba(180, 130, 0, 0.3); }
+.char-warning--error { background: rgba(200, 40, 40, 0.15);  color: #e55; border: 1px solid rgba(200, 40, 40, 0.3); }
+.char-warning-icon   { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
 .save-btn {
   flex: 1;
   padding: 10px;
