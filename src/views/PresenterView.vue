@@ -32,6 +32,9 @@
         <button :class="{active: openPanel==='qr'}" @click="togglePanel('qr')" title="Meeting QR Code">
           <span class="icon material-icons">qr_code_2</span>
         </button>
+        <button :class="{active: openPanel==='cast'}" @click="togglePanel('cast')" title="Cast to Screen">
+          <span class="icon material-icons">cast</span>
+        </button>
         <button class="back-btn" @click="$router.push('/')" title="Home">
           <span class="icon material-icons">arrow_back</span>
         </button>
@@ -228,6 +231,26 @@
               <p class="qr-hint">Scan to join <strong>{{ meetingName }}</strong></p>
               <img v-if="qrDataUrl" :src="qrDataUrl" class="qr-img" alt="Meeting QR Code" />
               <button class="quick-add-btn" @click="showQrOverlay = true">Show on Screen</button>
+            </template>
+          </div>
+        </div>
+        <div v-show="openPanel==='cast'" class="sidebar-panel">
+          <!-- Cast Panel -->
+          <div class="section-header"><span>Cast to Screen</span></div>
+          <div class="quick-add-block">
+            <p v-if="!meetingName.trim()" class="qr-hint">Select a meeting to start casting.</p>
+            <template v-else>
+              <p class="qr-hint">Cast <strong>{{ meetingName }}</strong> to a Chromecast or TV.</p>
+              <button class="quick-add-btn" @click="startCast">+ Add Screen</button>
+              <div v-if="castConnections.length" class="cast-list">
+                <div v-for="c in castConnections" :key="c.id" class="cast-item">
+                  <span class="material-icons cast-item-icon">tv</span>
+                  <span class="cast-item-label">{{ c.label }}</span>
+                  <span class="cast-item-state" :class="'cast-state-' + c.state">{{ c.state }}</span>
+                  <button class="cast-item-disconnect" @click="disconnectCast(c)" title="Disconnect">&#x2715;</button>
+                </div>
+              </div>
+              <p class="qr-hint cast-note">Requires Chrome. Cast device must be on the same network as this device.</p>
             </template>
           </div>
         </div>
@@ -726,6 +749,52 @@ async function generateQr(name) {
 
 watch(meetingName, (name) => generateQr(name))
 
+/* --- Cast (Web Presentation API) --- */
+const castConnections = ref([])
+let castRequest = null
+let castScreenCount = 0
+
+watch(meetingName, () => { castRequest = null })
+
+async function startCast() {
+  if (!meetingName.value.trim()) return
+  if (!window.PresentationRequest) {
+    alert('Casting requires Chrome browser.')
+    return
+  }
+  const url = window.location.origin + '/viewer?meet=' + encodeURIComponent(meetingName.value)
+  try {
+    if (!castRequest) castRequest = new PresentationRequest([url])
+    const conn = await castRequest.start()
+    castScreenCount++
+    const entry = { id: conn.id, connection: conn, label: 'Screen ' + castScreenCount, state: conn.state }
+
+    conn.addEventListener('connect',   () => updateCastState(entry.id, 'connected'))
+    conn.addEventListener('close',     () => removeCastEntry(entry.id))
+    conn.addEventListener('terminate', () => removeCastEntry(entry.id))
+
+    castConnections.value = [...castConnections.value, entry]
+  } catch (e) {
+    if (e.name !== 'NotAllowedError') {
+      console.error('Cast error:', e)
+      alert('Could not start casting: ' + e.message)
+    }
+  }
+}
+
+function updateCastState(id, state) {
+  castConnections.value = castConnections.value.map(c => c.id === id ? { ...c, state } : c)
+}
+
+function removeCastEntry(id) {
+  castConnections.value = castConnections.value.filter(c => c.id !== id)
+}
+
+function disconnectCast(entry) {
+  try { entry.connection.terminate() } catch {}
+  removeCastEntry(entry.id)
+}
+
 /* --- Active state --- */
 const activeType = ref(null)   // 'lesson' | 'section'
 const activeIdx = ref(null)
@@ -896,6 +965,7 @@ onMounted(async () => {
 onUnmounted(() => {
   window.removeEventListener('resize', resizeHandler)
   if (fitText) fitText.cleanup()
+  castConnections.value.forEach(c => { try { c.connection.terminate() } catch {} })
 })
 
 
@@ -1228,6 +1298,22 @@ select option { background: var(--bg-surface); }
   cursor: pointer;
 }
 .qr-overlay-close:hover { background: #555; }
+
+/* ── Cast ── */
+.cast-list { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
+.cast-item {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 8px; border-radius: var(--radius);
+  background: var(--bg-hover); font-size: 12px;
+}
+.cast-item-icon { font-size: 16px; color: var(--accent); flex-shrink: 0; }
+.cast-item-label { flex: 1; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cast-item-state { font-size: 10px; padding: 2px 6px; border-radius: 8px; flex-shrink: 0; background: var(--bg-active); color: var(--text-faint); }
+.cast-state-connected { background: #1a3a1a; color: #5c5; }
+.cast-state-connecting { background: #2a2a10; color: #bb5; }
+.cast-item-disconnect { background: none; border: none; color: var(--text-faint); font-size: 12px; cursor: pointer; padding: 2px 4px; border-radius: 3px; flex-shrink: 0; }
+.cast-item-disconnect:hover { color: var(--danger); background: var(--danger-hover); }
+.cast-note { margin-top: 4px; font-style: italic; }
 
 /* ── Mobile portrait ── */
 @media (max-width: 768px) and (orientation: portrait), (max-width: 500px) {
