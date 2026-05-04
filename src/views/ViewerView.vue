@@ -82,6 +82,7 @@ let eventSource = null
 let resizeHandler = null
 let wakeLock = null
 let noSleepVideo = null
+let retryTimer = null
 
 // --- Keep screen awake: Wake Lock API + silent-video fallback ---
 
@@ -197,13 +198,15 @@ function toggleChords() {
   }
 }
 
-onMounted(() => {
-  lockLandscape()
-  fitText = createFitText(displayRef, 0)
-
+function connectSSE() {
+  if (eventSource) {
+    eventSource.close()
+    eventSource = null
+  }
   eventSource = new EventSource('/api/events?meet=' + encodeURIComponent(meeting))
 
   eventSource.onmessage = async (event) => {
+    if (retryTimer) { clearTimeout(retryTimer); retryTimer = null }
     const data = JSON.parse(event.data)
     if (data.qr) {
       qrDataUrl.value = await QRCode.toDataURL(data.qr, { width: 400, margin: 2, color: { dark: '#ffffff', light: '#1a1a1a' } })
@@ -217,6 +220,18 @@ onMounted(() => {
     }
   }
 
+  eventSource.onerror = () => {
+    eventSource.close()
+    eventSource = null
+    retryTimer = setTimeout(connectSSE, 3000)
+  }
+}
+
+onMounted(() => {
+  lockLandscape()
+  fitText = createFitText(displayRef, 0)
+  connectSSE()
+
   resizeHandler = () => {
     if (!showChords.value || !currentChords.value) {
       fitText.fit(displayText.value)
@@ -228,6 +243,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  if (retryTimer) clearTimeout(retryTimer)
   if (eventSource) eventSource.close()
   if (resizeHandler) window.removeEventListener('resize', resizeHandler)
   if (fitText) fitText.cleanup()

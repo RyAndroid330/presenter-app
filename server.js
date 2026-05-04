@@ -72,7 +72,7 @@ app.get('/auth/google/callback', passport.authenticate('google', {
 }), (req, res) => {
   // Redirect to Vite dev server in development, or / in production
   if (process.env.NODE_ENV !== 'production') {
-    return res.redirect('https://localhost:5173');
+    return res.redirect('http://localhost:5173');
   }
   res.redirect('/');
 });
@@ -371,7 +371,8 @@ app.put("/api/lessons/:id/slides", (req, res) => {
 ----------------------- */
 app.get("/api/events", (req, res) => {
   const meetName = req.query.meet;
-  if (!meetName || !liveMeetings[meetName]) return res.status(404).end();
+  if (!meetName) return res.status(400).end();
+  if (!liveMeetings[meetName]) liveMeetings[meetName] = { text: '', chords: null, qr: null, clients: [] };
 
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
