@@ -6,6 +6,7 @@ import MusicianView from './views/MusicianView.vue'
 import SongEditorView from './views/SongEditorView.vue'
 import LessonEditorView from './views/LessonEditorView.vue'
 import TeacherView from './views/TeacherView.vue'
+import AssistantView from './views/AssistantView.vue'
 
 const routes = [
   { path: '/', component: HomeView },
@@ -14,7 +15,8 @@ const routes = [
   { path: '/musician', component: MusicianView },
   { path: '/song-editor', component: SongEditorView },
   { path: '/lesson-editor', component: LessonEditorView },
-  { path: '/teacher', component: TeacherView }
+  { path: '/teacher', component: TeacherView },
+  { path: '/assistant', component: AssistantView }
 ]
 
 

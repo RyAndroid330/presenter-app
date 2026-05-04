@@ -6,6 +6,7 @@
         <button @click="restrictedNav('/presenter')"  class="nav-btn" :class="{ active: route.path === '/presenter' }">Slides</button>
         <button @click="restrictedNav('/teacher')"    class="nav-btn" :class="{ active: route.path === '/teacher' }">Teacher</button>
         <button @click="restrictedNav('/musician')"   class="nav-btn" :class="{ active: route.path === '/musician' }">Musician</button>
+        <button @click="restrictedNav('/assistant')"  class="nav-btn" :class="{ active: route.path === '/assistant' }">Assistant</button>
         <button @click="openViewerDialog"             class="nav-btn" :class="{ active: route.path === '/viewer' }">Viewer</button>
       </nav>
       <div class="user-info">
