@@ -606,49 +606,66 @@ app.post("/api/assistant/broadcast-section", (req, res) => {
    API: AI MEETING ASSISTANT
    Parses Bible references locally and broadcasts to SSE clients.
 ----------------------- */
-app.post("/api/ai-assistant", (req, res) => {
+// Cache books list per translation to avoid repeated helloao.org fetches
+const helloaoBookCache = new Map();
+async function getHelloaoBooks(translationId) {
+  if (helloaoBookCache.has(translationId)) return helloaoBookCache.get(translationId);
+  const res = await fetch(`https://bible.helloao.org/api/${translationId}/books.json`);
+  if (!res.ok) return null;
+  const data = await res.json();
+  const books = data.books || [];
+  helloaoBookCache.set(translationId, books);
+  return books;
+}
+
+app.post("/api/ai-assistant", async (req, res) => {
   const { transcript, translationId, meetingName } = req.body;
   if (!transcript || !translationId) return res.status(400).json({ error: "Missing transcript or translationId" });
 
   const parsed = parseBibleRef(transcript);
-
   if (!parsed.hasBibleRef) {
     return res.json({ handled: false, message: "No Bible reference detected" });
   }
 
-  // Resolve book name to a DB book row
-  const books = bibledb.listBooks(translationId);
-  const q = parsed.book.toLowerCase();
-  const bookRow =
-    books.find(b => (b.commonName || b.name).toLowerCase() === q) ||
-    books.find(b => (b.commonName || b.name).toLowerCase().startsWith(q)) ||
-    books.find(b => (b.commonName || b.name).toLowerCase().includes(q));
+  try {
+    const books = await getHelloaoBooks(translationId);
+    if (!books) return res.status(404).json({ error: "Translation not found" });
 
-  if (!bookRow) {
-    return res.status(404).json({ error: `Book "${parsed.book}" not found in this translation` });
-  }
+    const q = parsed.book.toLowerCase();
+    const bookRow =
+      books.find(b => b.name.toLowerCase() === q) ||
+      books.find(b => b.name.toLowerCase().startsWith(q)) ||
+      books.find(b => b.name.toLowerCase().replace(/\s+/g, ' ').includes(q));
 
-  const verses = bibledb.getVerses(translationId, bookRow.id, parsed.chapter, parsed.verse, parsed.endVerse);
-  if (!verses.length) {
-    return res.status(404).json({ error: "Verse not found" });
-  }
+    if (!bookRow) return res.status(404).json({ error: `Book "${parsed.book}" not found` });
 
-  const verseRange = parsed.verse === parsed.endVerse ? `${parsed.verse}` : `${parsed.verse}–${parsed.endVerse}`;
-  const reference = `${bookRow.commonName || bookRow.name} ${parsed.chapter}:${verseRange}`;
-  const verseText = verses.map(v => v.text).join(" ");
-  const slideText = `${reference}\n\n${verseText}`;
+    const chRes = await fetch(`https://bible.helloao.org/api/${translationId}/${bookRow.id}/${parsed.chapter}.json`);
+    if (!chRes.ok) return res.status(404).json({ error: "Chapter not found" });
+    const chData = await chRes.json();
 
-  if (meetingName) {
-    if (!liveMeetings[meetingName]) liveMeetings[meetingName] = { text: '', chords: null, qr: null, clients: [] };
-    liveMeetings[meetingName].text = slideText;
-    liveMeetings[meetingName].chords = null;
-    liveMeetings[meetingName].qr = null;
-    for (const client of (liveMeetings[meetingName].clients || [])) {
-      client.write(`data: ${JSON.stringify({ text: slideText, chords: null, qr: null })}\n\n`);
+    const allVerses = (chData.chapter?.content || []).filter(c => c.type === 'verse');
+    const selected = allVerses.slice(parsed.verse - 1, parsed.endVerse);
+    if (!selected.length) return res.status(404).json({ error: "Verse not found" });
+
+    const verseText = selected.map(v => (v.content || []).filter(c => typeof c === 'string').join(' ')).join(' ');
+    const verseRange = parsed.verse === parsed.endVerse ? `${parsed.verse}` : `${parsed.verse}–${parsed.endVerse}`;
+    const reference = `${bookRow.name} ${parsed.chapter}:${verseRange}`;
+    const slideText = `${reference}\n\n${verseText}`;
+
+    if (meetingName) {
+      if (!liveMeetings[meetingName]) liveMeetings[meetingName] = { text: '', chords: null, qr: null, clients: [] };
+      liveMeetings[meetingName].text = slideText;
+      liveMeetings[meetingName].chords = null;
+      liveMeetings[meetingName].qr = null;
+      for (const client of (liveMeetings[meetingName].clients || [])) {
+        client.write(`data: ${JSON.stringify({ text: slideText, chords: null, qr: null })}\n\n`);
+      }
     }
-  }
 
-  res.json({ handled: true, reference, slideText, verses, parsedRef: { book: parsed.book, chapter: parsed.chapter, verse: parsed.verse, endVerse: parsed.endVerse } });
+    res.json({ handled: true, reference, slideText, parsedRef: { book: parsed.book, chapter: parsed.chapter, verse: parsed.verse, endVerse: parsed.endVerse } });
+  } catch (err) {
+    res.status(500).json({ error: `Failed to fetch verse: ${err.message}` });
+  }
 });
 
 /* -----------------------

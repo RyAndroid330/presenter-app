@@ -224,10 +224,29 @@ async function loadMeetings() {
   try { meetings.value = await fetch('/api/meetings').then(r => r.json()) } catch {}
 }
 
+let allTranslationsCache = null
+async function fetchAllTranslations() {
+  if (allTranslationsCache) return allTranslationsCache
+  const data = await fetch('https://bible.helloao.org/api/available_translations.json').then(r => r.json())
+  allTranslationsCache = data.translations || []
+  return allTranslationsCache
+}
+
 async function loadLanguages() {
   try {
-    const all = await fetch('/api/bible/languages').then(r => r.json())
-    languages.value = [...all.filter(l => l.popular), ...all.filter(l => !l.popular)]
+    const all = await fetchAllTranslations()
+    const langMap = new Map()
+    for (const t of all) {
+      if (!langMap.has(t.language)) {
+        langMap.set(t.language, {
+          code: t.language,
+          name: t.languageName || t.languageEnglishName || t.language,
+          popular: t.language === 'eng',
+        })
+      }
+    }
+    const sorted = Array.from(langMap.values()).sort((a, b) => a.name.localeCompare(b.name))
+    languages.value = [...sorted.filter(l => l.popular), ...sorted.filter(l => !l.popular)]
   } catch {}
 }
 
@@ -236,7 +255,10 @@ async function onLangChange() {
   translations.value = []
   if (!selectedLang.value) return
   try {
-    translations.value = await fetch(`/api/bible/translations?lang=${selectedLang.value}`).then(r => r.json())
+    const all = await fetchAllTranslations()
+    translations.value = all
+      .filter(t => t.language === selectedLang.value)
+      .map(t => ({ id: t.id, shortName: t.shortName || t.id, englishName: t.englishName || t.name || t.id }))
     const preferred = translations.value.find(t => t.id === 'BSB') || translations.value.find(t => t.id === 'eng_asv')
     if (preferred) selectedTranslation.value = preferred.id
     else if (translations.value.length === 1) selectedTranslation.value = translations.value[0].id
