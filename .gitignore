@@ -33,6 +33,13 @@ Desktop.ini
 # Mac
 *.DS_Store
 
-# Bible
+# Bible DB (11GB — lives on Render persistent disk, never in git)
 bible.db
-archive/
+archive/bible.db
+archive/*.db
+# Archive utility/temp files (only bibledb.js belongs in git)
+archive/_*
+archive/*.bak
+archive/*.removed
+archive/*.txt
+archive/*.json
